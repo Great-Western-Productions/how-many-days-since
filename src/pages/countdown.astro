@@ -1,23 +1,20 @@
 ---
 import SiteShell from '../components/SiteShell.astro';
+import { SITE_URL, canonicalUrl } from '../lib/canonical';
+import { countdownDescription, countdownTitle, gameEventSchema } from '../lib/game-event';
 import { nextRivalryGame } from '../lib/next-rivalry-game';
+import { ogImagePathFor } from '../lib/og-card';
 
 const [firstTeam, secondTeam] = nextRivalryGame.name.toUpperCase().split(' VS. ');
 const teamChipClass = (team: string) => team.includes('OHIO') ? 'osu' : 'mich';
-const eventSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'SportsEvent',
-  name: nextRivalryGame.name,
-  startDate: nextRivalryGame.start,
-  location: {
-    '@type': 'Place',
-    name: nextRivalryGame.location,
-    address: { '@type': 'PostalAddress', addressLocality: nextRivalryGame.location, addressRegion: 'OH', addressCountry: 'US' },
-  },
-};
+const pageUrl = canonicalUrl(Astro.url.pathname);
+const eventSchema = gameEventSchema(nextRivalryGame, {
+  url: pageUrl,
+  image: new URL(ogImagePathFor(Astro.url.pathname), SITE_URL).toString(),
+});
 ---
 
-<SiteShell active="countdown" title="Countdown to The Game | Ohio State vs Michigan" description="A live countdown to the 2026 Ohio State-Michigan game in Columbus." schema={eventSchema}>
+<SiteShell active="countdown" title={countdownTitle(nextRivalryGame)} description={countdownDescription(nextRivalryGame)} schema={eventSchema}>
   <section class="countdown" data-countdown data-game-start={nextRivalryGame.start}>
     <p class="eyebrow"><span class:list={['eyebrow-team', teamChipClass(firstTeam)]}>{firstTeam}</span> VS. <span class:list={['eyebrow-team', teamChipClass(secondTeam)]}>{secondTeam}</span></p>
     <h1>THE GAME</h1>
