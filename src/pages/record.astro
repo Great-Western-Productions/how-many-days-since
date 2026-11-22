@@ -3,6 +3,7 @@ import SiteShell from '../components/SiteShell.astro';
 import games from '../data/rivalry-games.json';
 import { calculateRivalryRecord, type Team } from '../lib/rivalry-record';
 import { teamIdFor, teamSeasonFor } from '../lib/rivalry-archive';
+import { earliestGame } from '../lib/rivalry-anchors';
 
 const totals = games.reduce(
   (value, game) => ({
@@ -26,7 +27,7 @@ const seasonRecord = (team: Team, season: number) => {
 };
 ---
 
-<SiteShell active="record" title="The Record | Ohio State vs Michigan" description="All 121 Ohio State-Michigan meetings from 1897 through 2025, with rivalry results by decade.">
+<SiteShell active="record" title={`Ohio State vs Michigan All-Time Record: Every Game Since ${earliestGame().year}`} description="All 121 Ohio State-Michigan meetings from 1897 through 2025, with rivalry results by decade.">
   <section class="record">
     <div class="section-title"><h1>THE RECORD</h1><span>121 MEETINGS · 1897-2025</span></div>
     <section class="tally">

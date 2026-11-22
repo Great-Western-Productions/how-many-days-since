@@ -59,6 +59,14 @@ for (const { path, card } of PAGES) {
   });
 }
 
+test('titles the record page for the all-time record question, with no game count', async ({ page }) => {
+  await page.goto('/record/');
+
+  const title = await page.title();
+  expect(title).toBe('Ohio State vs Michigan All-Time Record: Every Game Since 1897');
+  expect(title).not.toMatch(/\b\d{3}\b/);
+});
+
 test('points both URL variants of a page at one canonical', async ({ page }) => {
   const canonical = `${SITE}/mo-carmen/`;
 

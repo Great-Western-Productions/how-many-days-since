@@ -95,7 +95,7 @@ test.describe('share badge', () => {
     expect(url.origin + url.pathname).toBe('https://x.com/intent/post');
     expect(url.searchParams.get('text')).toContain(`${days} days since Michigan beat Ohio State`);
     expect(url.searchParams.get('url')).toBe(
-      'https://howmanydayssincemichiganhasbeatenohiostate.com'
+      'https://howmanydayssincemichiganhasbeatenohiostate.com/?utm_source=x&utm_medium=social&utm_campaign=days_since_share'
     );
   });
 });

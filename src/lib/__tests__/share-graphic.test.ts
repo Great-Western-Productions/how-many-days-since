@@ -7,6 +7,7 @@ import {
   formatCount,
   formatDayCount,
   shareFileName,
+  withShareTracking,
   wrapText,
 } from '../share-graphic';
 
@@ -46,9 +47,30 @@ describe('buildShareCaption', () => {
   });
 });
 
+describe('withShareTracking', () => {
+  it('tags the link so Analytics files the visit under social', () => {
+    const url = new URL(withShareTracking(SITE, 'x'));
+    expect(url.origin + url.pathname).toBe(`${SITE}/`);
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      utm_source: 'x',
+      utm_medium: 'social',
+      utm_campaign: 'days_since_share',
+    });
+  });
+
+  it('keeps a query string the link already carries', () => {
+    const url = new URL(withShareTracking(`${SITE}/countdown/?ref=1`, 'share_sheet'));
+    expect(url.pathname).toBe('/countdown/');
+    expect(url.searchParams.get('ref')).toBe('1');
+    expect(url.searchParams.get('utm_source')).toBe('share_sheet');
+  });
+});
+
 describe('buildShareText', () => {
-  it('appends the site URL on its own line', () => {
-    expect(buildShareText(628, SITE)).toBe(`${buildShareCaption(628)}\n${SITE}`);
+  it('appends the tagged site URL on its own line', () => {
+    expect(buildShareText(628, SITE)).toBe(
+      `${buildShareCaption(628)}\n${withShareTracking(SITE, 'share_sheet')}`
+    );
   });
 });
 
@@ -60,7 +82,7 @@ describe('buildXIntentUrl', () => {
   it('sends text and url as separate encoded params', () => {
     const params = new URL(buildXIntentUrl(628, SITE)).searchParams;
     expect(params.get('text')).toBe(buildShareCaption(628));
-    expect(params.get('url')).toBe(SITE);
+    expect(params.get('url')).toBe(withShareTracking(SITE, 'x'));
   });
 });
 
