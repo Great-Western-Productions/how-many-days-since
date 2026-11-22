@@ -26,16 +26,31 @@ export function buildShareCaption(days: number): string {
   return `${formatDayCount(days)} since Michigan beat Ohio State. Go Bucks! 🅾️`;
 }
 
+/** Where a shared link was posted from, as Analytics will report it. */
+export type ShareSource = 'x' | 'share_sheet';
+
+/**
+ * Tags a shared link so the visit it brings back is filed under social with a
+ * named source. An untagged link opened from an app arrives as Direct.
+ */
+export function withShareTracking(siteUrl: string, source: ShareSource): string {
+  const url = new URL(siteUrl);
+  url.searchParams.set('utm_source', source);
+  url.searchParams.set('utm_medium', 'social');
+  url.searchParams.set('utm_campaign', 'days_since_share');
+  return url.toString();
+}
+
 /** Caption plus the site URL, for share sheets that take one text blob. */
 export function buildShareText(days: number, siteUrl: string): string {
-  return `${buildShareCaption(days)}\n${siteUrl}`;
+  return `${buildShareCaption(days)}\n${withShareTracking(siteUrl, 'share_sheet')}`;
 }
 
 /** X keeps text and URL separate so the link unfurls its own preview card. */
 export function buildXIntentUrl(days: number, siteUrl: string): string {
   const params = new URLSearchParams({
     text: buildShareCaption(days),
-    url: siteUrl,
+    url: withShareTracking(siteUrl, 'x'),
   });
   return `https://x.com/intent/post?${params.toString()}`;
 }
