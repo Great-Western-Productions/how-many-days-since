@@ -275,7 +275,7 @@ test.describe('Record', () => {
 
   test('renders all 121 meetings and filters them', async ({ page }) => {
     await page.goto('/record/');
-    await expect(page).toHaveTitle(/The Record/i);
+    await expect(page).toHaveTitle(/All-Time Record/i);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('THE RECORD');
     await expect(page.locator('[data-game]')).toHaveCount(121);
     await page.getByLabel('Filter games').fill('2025');
