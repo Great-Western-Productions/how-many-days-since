@@ -49,7 +49,7 @@ test.describe('Count', () => {
 
   test('renders the handoff counter and shared navigation', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/How many days since Michigan has beaten Ohio State/i);
+    await expect(page).toHaveTitle(/Days Since Michigan Beat Ohio State/i);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('HOW MANY DAYS SINCE');
     const nav = page.getByRole('navigation', { name: 'Site' });
     await expect(nav.getByRole('link')).toHaveCount(5);
@@ -61,7 +61,10 @@ test.describe('Count', () => {
   test('answers both directions of the question', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle('How Many Days Since Michigan Has Beaten Ohio State? How Many Days Since Ohio State Beat Michigan?');
+    // Both directions inside the width a search result shows before it cuts the title.
+    const title = await page.title();
+    expect(title).toBe('Days Since Michigan Beat Ohio State & Ohio State Beat Michigan');
+    expect(title.length).toBeLessThanOrEqual(62);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /days since Michigan beat Ohio State\. \d[\d,]* days since Ohio State beat Michigan\./);
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Ohio State Beat Michigan/);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('AND HOW MANY DAYS SINCE OHIO STATE BEAT MICHIGAN?');
