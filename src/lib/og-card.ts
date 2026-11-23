@@ -12,7 +12,7 @@ import games from '../data/rivalry-games.json';
 import { calcDaysSince } from './days';
 import { lastMichiganWin, lastOhioStateWin } from './rivalry-anchors';
 import { nextGameDateLabel, nextRivalryGame } from './next-rivalry-game';
-import { gamePhase, kickoffInSentence } from './game-event';
+import { gamePhase, kickoffInSentence, nextPhaseChange } from './game-event';
 import { TEAM_NAMES, cityFor, formatRecord as formatPreviewRecord, kickoffDate, rivalryPreview } from './preview';
 import { teamIdFor, teamNameFor, formatRecord, type RivalryTeam } from './rivalry-archive';
 import { rivalrySnapshot, type TeamId } from './rivalry-snapshot';
@@ -187,6 +187,23 @@ function teamSeasonCard(teamId: string, season: number): OgCard | null {
     detail: `${entry.games} games · ${entry.pointsFor} for · ${entry.pointsAgainst} against · ${margin} per game`,
     team: entry.teamId as TeamId,
   };
+}
+
+/** A day: long enough that scrapers reuse a card, short enough to stay current. */
+export const OG_CACHE_SECONDS = 86_400;
+
+/**
+ * How long a cache may keep a card. The countdown card changes at each game
+ * phase, so it expires at the next change instead of a day later. Once final
+ * it waits on a deploy, so it is held ten minutes. A minute is the floor, so
+ * a request just before a change is not refetched on every view.
+ */
+export function ogCacheSeconds(pathname: string, now: Date = new Date()): number {
+  if (normalizePath(pathname) !== '/countdown') return OG_CACHE_SECONDS;
+  const change = nextPhaseChange(nextRivalryGame, now);
+  if (!change) return 600;
+  const untilChange = Math.ceil((change.getTime() - now.getTime()) / 1_000);
+  return Math.min(OG_CACHE_SECONDS, Math.max(60, untilChange));
 }
 
 /** Drops the trailing slash Astro leaves on some URLs, so `/record/` maps too. */
