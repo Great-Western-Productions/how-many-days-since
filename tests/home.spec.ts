@@ -52,9 +52,10 @@ test.describe('Count', () => {
     await expect(page).toHaveTitle(/Days Since Michigan Beat Ohio State/i);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('HOW MANY DAYS SINCE');
     const nav = page.getByRole('navigation', { name: 'Site' });
-    await expect(nav.getByRole('link')).toHaveCount(5);
+    await expect(nav.getByRole('link')).toHaveCount(6);
     await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     await expect(nav.getByRole('link', { name: 'COUNTDOWN' })).toHaveAttribute('href', '/countdown/');
+    await expect(nav.getByRole('link', { name: 'PREVIEW' })).toHaveAttribute('href', '/preview/');
     await expect(page.locator('[data-live-count]')).toHaveAttribute('data-reference-date', '2024-11-30T17:00:00Z');
   });
 

@@ -35,6 +35,14 @@ describe('resolveOgCard', () => {
     expect(card?.headline).toBe('IT IS HERE');
   });
 
+  it('carries both records and the kickoff on the preview card', () => {
+    const card = resolveOgCard('/preview', NOW);
+
+    expect(card?.headline).toBe('THE PREVIEW');
+    expect(card?.detail).toMatch(/^Ohio State \d+-\d+ · Michigan \d+-\d+ · November \d+, \d{4} · (Columbus|Ann Arbor)$/);
+    expect(card?.team).toBe('rivalry');
+  });
+
   it('reports the meeting count on the record card', () => {
     const card = resolveOgCard('/record', NOW);
 
@@ -118,7 +126,7 @@ describe('ogImagePathFor', () => {
 
 describe('pagePathForOgRoute', () => {
   it('round-trips every page path through its image path', () => {
-    for (const page of ['/', '/countdown', '/record', '/record/2024', '/teams/michigan/1997']) {
+    for (const page of ['/', '/countdown', '/preview', '/record', '/record/2024', '/teams/michigan/1997']) {
       const route = ogImagePathFor(page).replace('/og/', '');
       expect(pagePathForOgRoute(route)).toBe(page);
     }
