@@ -6,6 +6,10 @@ const SITE = 'https://howmanydayssincemichiganhasbeatenohiostate.com';
 const PAGES = [
   { path: '/', card: `${SITE}/og/home.png` },
   { path: '/countdown', card: `${SITE}/og/countdown.png` },
+  {
+    path: '/days-since-ohio-state-beat-michigan',
+    card: `${SITE}/og/days-since-ohio-state-beat-michigan.png`,
+  },
   { path: '/record', card: `${SITE}/og/record.png` },
   { path: '/record/2024', card: `${SITE}/og/record/2024.png` },
   { path: '/rivalry-lab', card: `${SITE}/og/rivalry-lab.png` },
