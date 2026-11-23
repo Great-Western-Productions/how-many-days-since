@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { FINAL_AFTER_MS, countdownDescription, countdownTitle, gameEventSchema, gamePhase, kickoffLine } from '../game-event';
-import { nextGameDateLabel, nextRivalryGame, type RivalryGameSchedule } from '../next-rivalry-game';
+import { nextGameDateLabel, type RivalryGameSchedule } from '../next-rivalry-game';
+
+/**
+ * The 2026 meeting, fixed here so these tests describe the functions and not
+ * whichever game the live record points at. The record moves every season.
+ */
+const nextRivalryGame: RivalryGameSchedule = {
+  name: 'Michigan vs. Ohio State',
+  start: '2026-11-28T12:00:00-05:00',
+  end: '2026-11-28T15:30:00-05:00',
+  date: 'November 28, 2026',
+  time: 'Noon ET',
+  location: 'Columbus',
+  timeZone: 'America/New_York',
+  dateAnnounced: true,
+  venue: { name: 'Ohio Stadium', streetAddress: '411 Woody Hayes Drive', region: 'OH', postalCode: '43210' },
+  homeTeam: { name: 'Ohio State Buckeyes', url: 'https://ohiostatebuckeyes.com' },
+  awayTeam: { name: 'Michigan Wolverines' },
+};
 
 const IMAGE = 'https://howmanydayssincemichiganhasbeatenohiostate.com/og/countdown.png';
 const PAGE = 'https://howmanydayssincemichiganhasbeatenohiostate.com/countdown/';
