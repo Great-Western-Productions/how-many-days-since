@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { OG_IMAGE_TYPE, pagePathForOgRoute, resolveOgCard } from '../../lib/og-card';
+import { OG_IMAGE_TYPE, ogCacheSeconds, pagePathForOgRoute, resolveOgCard } from '../../lib/og-card';
 import { renderOgCard } from '../../lib/og-render';
 
 /**
@@ -12,18 +12,17 @@ import { renderOgCard } from '../../lib/og-render';
  */
 export const prerender = false;
 
-/** A day: long enough that scrapers reuse a card, short enough to stay current. */
-const CACHE_SECONDS = 86_400;
-
 export const GET: APIRoute = async ({ params }) => {
   const path = pagePathForOgRoute(params.route);
-  const card = path ? resolveOgCard(path) : null;
-  if (!card) return new Response('Not found', { status: 404 });
+  const now = new Date();
+  const card = path ? resolveOgCard(path, now) : null;
+  if (!path || !card) return new Response('Not found', { status: 404 });
+  const cacheSeconds = ogCacheSeconds(path, now);
 
   return new Response(await renderOgCard(card), {
     headers: {
       'Content-Type': OG_IMAGE_TYPE,
-      'Cache-Control': `public, max-age=${CACHE_SECONDS}, s-maxage=${CACHE_SECONDS}`,
+      'Cache-Control': `public, max-age=${cacheSeconds}, s-maxage=${cacheSeconds}`,
     },
   });
 };
