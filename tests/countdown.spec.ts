@@ -34,3 +34,68 @@ test('links the home next-game line to the countdown and colors Columbus on hove
   await expect(nextGame).toHaveAttribute('href', '/countdown/');
   await expect(nextGame).toHaveClass(/next-game-link/);
 });
+
+test.describe('game-day states', () => {
+  const visit = async (page: import('@playwright/test').Page, iso: string) => {
+    await page.clock.install({ time: new Date(iso) });
+    await page.goto('/countdown/');
+  };
+  const clock = (page: import('@playwright/test').Page) => page.locator('.countdown-clock');
+
+  test('runs the clock with no game-day line before game day', async ({ page }) => {
+    await visit(page, '2026-11-25T12:00:00-05:00');
+
+    await expect(clock(page)).toBeVisible();
+    await expect(page.getByText(/^GAME DAY ·/)).toBeHidden();
+    await expect(page.getByText('IN PROGRESS', { exact: true })).toBeHidden();
+  });
+
+  test('keeps the clock under a game-day line on the morning of the game', async ({ page }) => {
+    await visit(page, '2026-11-28T09:00:30-05:00');
+
+    await expect(page.getByText('GAME DAY · KICKOFF AT NOON ET')).toBeVisible();
+    await expect(clock(page)).toBeVisible();
+    await expect(page.locator('[data-countdown-hours]')).toHaveText('02');
+    await expect(page.locator('[data-countdown-minutes]')).toHaveText('59');
+  });
+
+  test('swaps the clock for an in-progress state at kickoff', async ({ page }) => {
+    await visit(page, '2026-11-28T13:30:00-05:00');
+
+    await expect(page.getByText('IN PROGRESS', { exact: true })).toBeVisible();
+    await expect(page.getByText('Kickoff was noon ET at Ohio Stadium.', { exact: false })).toBeVisible();
+    await expect(clock(page)).toBeHidden();
+    await expect(page.getByRole('link', { name: 'Days since Michigan beat Ohio State →' })).toHaveAttribute('href', '/');
+    await expect(page.getByRole('link', { name: 'Days since Ohio State beat Michigan →' })).toHaveAttribute(
+      'href',
+      '/days-since-ohio-state-beat-michigan/'
+    );
+  });
+
+  test('calls it final four hours after kickoff', async ({ page }) => {
+    await visit(page, '2026-11-28T16:30:00-05:00');
+
+    await expect(page.getByText('FINAL', { exact: true })).toBeVisible();
+    await expect(page.getByText('IN PROGRESS', { exact: true })).toBeHidden();
+    await expect(clock(page)).toBeHidden();
+    await expect(page.getByRole('link', { name: 'Days since Michigan beat Ohio State →' })).toBeVisible();
+  });
+
+  test('moves from the clock to in progress while the page stays open', async ({ page }) => {
+    await visit(page, '2026-11-28T11:59:50-05:00');
+    await expect(clock(page)).toBeVisible();
+
+    await page.clock.runFor(15_000);
+
+    await expect(page.getByText('IN PROGRESS', { exact: true })).toBeVisible();
+    await expect(clock(page)).toBeHidden();
+  });
+
+  test('fits a phone in the final state', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await visit(page, '2026-11-28T16:30:00-05:00');
+
+    await expect(page.getByText('FINAL', { exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+});

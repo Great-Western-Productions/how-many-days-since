@@ -3,7 +3,7 @@ import SiteShell from '../components/SiteShell.astro';
 import games from '../data/rivalry-games.json';
 import { calcDaysSince } from '../lib/days';
 import { formatCount } from '../lib/share-graphic';
-import { nextRivalryGame } from '../lib/next-rivalry-game';
+import { nextGameDateLabel, nextRivalryGame } from '../lib/next-rivalry-game';
 import { earliestGame, lastOhioStateWin, latestGame } from '../lib/rivalry-anchors';
 
 // The Ohio State side of the question on a page of its own. The home page
@@ -21,7 +21,7 @@ const dayWord = (count: number) => (count === 1 ? 'day' : 'days');
 const lastWin = `Ohio State won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}.`;
 
 const title = 'How Many Days Since Ohio State Beat Michigan?';
-const description = `${formatCount(days)} ${dayWord(days)} since Ohio State beat Michigan. OSU last won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}. Next meeting: ${nextRivalryGame.date} in ${nextRivalryGame.location}.`;
+const description = `${formatCount(days)} ${dayWord(days)} since Ohio State beat Michigan. OSU last won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}. Next meeting: ${nextGameDateLabel(nextRivalryGame)} in ${nextRivalryGame.location}.`;
 const countAnswer = `As of ${date}, it has been ${formatCount(days)} ${dayWord(days)} since Ohio State last beat Michigan. ${lastWin}`;
 const lastWinAnswer = `Ohio State last beat Michigan on ${lastOhioStateWin.longDate}, winning ${lastOhioStateWin.score} in ${lastOhioStateWin.location}.`;
 // Server-rendered per request, so the answers match the counter on every visit.
@@ -34,9 +34,11 @@ const faqSchema = {
     { '@type': 'Question', name: 'When did Ohio State last beat Michigan?', acceptedAnswer: { '@type': 'Answer', text: lastWinAnswer } },
   ],
 };
+// The host city wears the host's color in the next-game line.
+const hostClass = nextRivalryGame.homeTeam.name.startsWith('Ohio State') ? 'osu' : 'mich';
 ---
 <SiteShell title={title} description={description} schema={faqSchema}>
-  <section class="count" data-osu-count data-reference-date={lastOhioStateWin.iso}><h1>HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="osu_days_count">{formatCount(days)}</strong> <span>DAYS</span></p><p class="last">Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextRivalryGame.date} - <span class="osu">{nextRivalryGame.location}</span>.</a></p></section>
+  <section class="count" data-osu-count data-reference-date={lastOhioStateWin.iso}><h1>HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="osu_days_count">{formatCount(days)}</strong> <span>DAYS</span></p><p class="last">Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextGameDateLabel(nextRivalryGame)} - <span class={hostClass}>{nextRivalryGame.location}</span>.</a></p></section>
   <section class="stat-box"><div><strong class={newest.winner === 'Ohio State' ? 'osu' : newest.winner === 'Michigan' ? 'mich' : undefined}>{newest.winner === 'Ohio State' ? 'OSU' : newest.winner === 'Michigan' ? 'MICH' : 'TIE'} {newest.wScore}-{newest.lScore}</strong><small>THE GAME, {newest.year} · {newest.location?.toUpperCase()}</small></div><div><strong class="osu">{since2012.ohioState}-{since2012.michigan}</strong><small>OSU VS MICHIGAN SINCE 2012</small></div><div><strong>{totals.ohioState}-{totals.michigan}-{totals.ties}</strong><small>ALL-TIME SERIES (OSU-M-T), {oldest.year}-{newest.year}</small></div></section>
   <section class="osu-faq">
     <h2>How many days since OSU beat Michigan?</h2>
@@ -68,6 +70,7 @@ const faqSchema = {
   .count h1 { font-size: 42.5px; }
   .next-game-link { color:inherit; text-decoration:none; }
   .next-game-link:hover .osu,.next-game-link:focus-visible .osu { background:#bb0000; color:#d9dce1; }
+  .next-game-link:hover .mich,.next-game-link:focus-visible .mich { background:#00274c; color:#ffcb05; }
   .osu-faq { max-width:640px; margin:40px auto 0; }
   .osu-faq h2 { margin:28px 0 8px; font:20px 'Archivo Black'; letter-spacing:.01em; }
   .osu-faq p { margin:0; color:#3d4148; font-size:16px; line-height:1.55; }

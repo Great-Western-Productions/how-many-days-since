@@ -1,7 +1,7 @@
 ---
 import SiteShell from '../components/SiteShell.astro';
 import { SITE_URL, canonicalUrl } from '../lib/canonical';
-import { countdownDescription, countdownTitle, gameEventSchema } from '../lib/game-event';
+import { countdownDescription, countdownTitle, gameEventSchema, gamePhase, kickoffInSentence, kickoffLine } from '../lib/game-event';
 import { nextRivalryGame } from '../lib/next-rivalry-game';
 import { ogImagePathFor } from '../lib/og-card';
 
@@ -12,23 +12,39 @@ const eventSchema = gameEventSchema(nextRivalryGame, {
   url: pageUrl,
   image: new URL(ogImagePathFor(Astro.url.pathname), SITE_URL).toString(),
 });
+// Rendered for the hour of the request; the script below moves it on while
+// the page stays open.
+const phase = gamePhase(nextRivalryGame, new Date());
 ---
 
-<SiteShell active="countdown" title={countdownTitle(nextRivalryGame)} description={countdownDescription(nextRivalryGame)} schema={eventSchema}>
-  <section class="countdown" data-countdown data-game-start={nextRivalryGame.start}>
+<SiteShell active="countdown" title={countdownTitle(nextRivalryGame)} description={countdownDescription(nextRivalryGame)} schema={eventSchema ?? undefined}>
+  <section class="countdown" data-countdown data-game-start={nextRivalryGame.start} data-phase={phase}>
     <p class="eyebrow"><span class:list={['eyebrow-team', teamChipClass(firstTeam)]}>{firstTeam}</span> VS. <span class:list={['eyebrow-team', teamChipClass(secondTeam)]}>{secondTeam}</span></p>
     <h1>THE GAME</h1>
-    <p class="kickoff">{nextRivalryGame.date.toUpperCase()} · {nextRivalryGame.time.toUpperCase()} · {nextRivalryGame.location.toUpperCase()}</p>
-    <div class="countdown-clock" aria-live="polite" aria-label="Time remaining until The Game">
+    <p class="kickoff">{kickoffLine(nextRivalryGame)}</p>
+    {!nextRivalryGame.dateAnnounced && <p class="kickoff-note">The Big Ten has not announced the date. The clock counts to the expected Saturday.</p>}
+    <p class="game-day-line" data-phase-show="game-day">GAME DAY · KICKOFF AT {nextRivalryGame.time.toUpperCase()}</p>
+    <div class="countdown-clock" data-phase-show="upcoming game-day" aria-live="polite" aria-label="Time remaining until The Game">
       <div><strong data-countdown-days>0</strong><span>DAYS</span></div>
       <div><strong data-countdown-hours>00</strong><span>HOURS</span></div>
       <div><strong data-countdown-minutes>00</strong><span>MINUTES</span></div>
       <div><strong data-countdown-seconds>00</strong><span>SECONDS</span></div>
     </div>
+    <div class="game-status" data-phase-show="in-progress">
+      <p class="game-status-word">IN PROGRESS</p>
+      <p class="game-status-copy">Kickoff was {kickoffInSentence(nextRivalryGame)} at {nextRivalryGame.venue.name}. The counts change when the result goes up after the game.</p>
+    </div>
+    <div class="game-status" data-phase-show="final">
+      <p class="game-status-word">FINAL</p>
+      <p class="game-status-copy">The Game is over. The result goes on the counts shortly.</p>
+    </div>
+    <p class="count-links" data-phase-show="in-progress final"><a href="/">Days since Michigan beat Ohio State →</a><a href="/days-since-ohio-state-beat-michigan/">Days since Ohio State beat Michigan →</a></p>
   </section>
 </SiteShell>
 
 <script>
+  import { gamePhase } from '../lib/game-event';
+
   const countdown = document.querySelector<HTMLElement>('[data-countdown]');
   const gameStart = new Date(countdown?.dataset.gameStart ?? '').getTime();
   const days = document.querySelector<HTMLElement>('[data-countdown-days]');
@@ -37,6 +53,7 @@ const eventSchema = gameEventSchema(nextRivalryGame, {
   const seconds = document.querySelector<HTMLElement>('[data-countdown-seconds]');
 
   const render = () => {
+    if (countdown) countdown.dataset.phase = gamePhase({ start: countdown.dataset.gameStart ?? '' }, new Date());
     const remaining = Math.max(gameStart - Date.now(), 0);
     const totalSeconds = Math.floor(remaining / 1_000);
     if (days) days.textContent = String(Math.floor(totalSeconds / 86_400));
@@ -59,6 +76,13 @@ const eventSchema = gameEventSchema(nextRivalryGame, {
    .eyebrow-team.osu { background:#bb0000; color:#d9dce1; }
    .eyebrow-team.mich { background:#00274c; color:#ffcb05; }
   .kickoff { margin:0; }
+  .kickoff-note { margin:6px 0 0; color:#6b717c; font-size:13px; }
+  .game-day-line { margin:24px 0 0; padding:8px 12px; align-self:center; background:#bb0000; color:#fff; font-size:15px; font-weight:700; letter-spacing:.08em; }
+  .game-status { margin:36px 0 0; padding:28px 16px; border:3px solid #111; }
+  .game-status-word { margin:0; color:var(--team); font:clamp(34px, 9vw, 96px)/.9 'Archivo Black'; letter-spacing:-.04em; }
+  .game-status-copy { margin:16px auto 0; max-width:520px; color:#3d4148; font-size:16px; line-height:1.5; }
+  .count-links { margin:24px 0 0; }
+  .count-links a { display:inline-block; margin:0 12px 8px; color:#00274c; font-weight:700; }
    .countdown-clock { display:grid; grid-template-columns:repeat(4,1fr); margin:36px 0 0; border:3px solid #111; }
   .countdown-clock div { padding:22px 12px; border-right:1px solid #d9dce1; }
   .countdown-clock div:last-child { border:0; }
@@ -67,4 +91,13 @@ const eventSchema = gameEventSchema(nextRivalryGame, {
   /* Centering leaves the block sitting low on a tall phone, so it starts
      from the top with a smaller gap under the header. */
   @media (max-width:640px) { .countdown { justify-content:flex-start; padding-top:7vh; } .countdown-clock div { padding:18px 4px; } }
+  /* Each block names the phases it shows in; the section carries the phase.
+     Last in the sheet so it overrides the clock's own grid display. */
+  [data-phase-show] { display:none; }
+  [data-phase="upcoming"] [data-phase-show~="upcoming"],
+  [data-phase="game-day"] [data-phase-show~="game-day"],
+  [data-phase="in-progress"] [data-phase-show~="in-progress"],
+  [data-phase="final"] [data-phase-show~="final"] { display:block; }
+  [data-phase="upcoming"] .countdown-clock[data-phase-show~="upcoming"],
+  [data-phase="game-day"] .countdown-clock[data-phase-show~="game-day"] { display:grid; }
 </style>

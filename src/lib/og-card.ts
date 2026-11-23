@@ -11,7 +11,8 @@
 import games from '../data/rivalry-games.json';
 import { calcDaysSince } from './days';
 import { lastMichiganWin, lastOhioStateWin } from './rivalry-anchors';
-import { nextRivalryGame } from './next-rivalry-game';
+import { nextGameDateLabel, nextRivalryGame } from './next-rivalry-game';
+import { gamePhase, kickoffInSentence } from './game-event';
 import { TEAM_NAMES, cityFor, formatRecord as formatPreviewRecord, kickoffDate, rivalryPreview } from './preview';
 import { teamIdFor, teamNameFor, formatRecord, type RivalryTeam } from './rivalry-archive';
 import { rivalrySnapshot, type TeamId } from './rivalry-snapshot';
@@ -99,11 +100,19 @@ function ohioStateCountCard(now: Date): OgCard {
   };
 }
 
+/** Follows the countdown page through game day, so a share on Saturday matches the page. */
 function countdownCard(now: Date): OgCard {
   const days = calcDaysSince(now, new Date(nextRivalryGame.start));
-  const when = `${nextRivalryGame.date} · ${nextRivalryGame.time} · ${nextRivalryGame.location}`;
-  if (days <= 0) {
-    return { eyebrow: 'THE GAME', headline: 'IT IS HERE', detail: when, team: 'rivalry' };
+  const when = `${nextGameDateLabel(nextRivalryGame)} · ${nextRivalryGame.time} · ${nextRivalryGame.location}`;
+  const phase = gamePhase(nextRivalryGame, now);
+  if (phase === 'game-day') {
+    return { eyebrow: 'THE GAME', headline: 'GAME DAY', detail: when, team: 'rivalry' };
+  }
+  if (phase === 'in-progress') {
+    return { eyebrow: 'THE GAME', headline: 'IN PROGRESS', detail: `Kickoff ${kickoffInSentence(nextRivalryGame)} · ${nextRivalryGame.venue.name}`, team: 'rivalry' };
+  }
+  if (phase === 'final') {
+    return { eyebrow: 'THE GAME', headline: 'FINAL', detail: 'The result goes on the counts shortly', team: 'rivalry' };
   }
   return {
     eyebrow: 'COUNTDOWN TO THE GAME',

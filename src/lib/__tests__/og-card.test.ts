@@ -28,11 +28,14 @@ describe('resolveOgCard', () => {
     expect(card?.team).toBe('rivalry');
   });
 
-  it('drops the countdown to a kickoff banner once the game arrives', () => {
-    const card = resolveOgCard('/countdown', new Date('2026-11-28T18:00:00Z'));
+  it('follows the countdown page through game day', () => {
+    const at = (iso: string) => resolveOgCard('/countdown', new Date(iso));
 
-    expect(card?.metric).toBeUndefined();
-    expect(card?.headline).toBe('IT IS HERE');
+    expect(at('2026-11-28T08:00:00-05:00')?.headline).toBe('GAME DAY');
+    expect(at('2026-11-28T08:00:00-05:00')?.metric).toBeUndefined();
+    expect(at('2026-11-28T13:00:00-05:00')?.headline).toBe('IN PROGRESS');
+    expect(at('2026-11-28T13:00:00-05:00')?.detail).toBe('Kickoff noon ET · Ohio Stadium');
+    expect(at('2026-11-28T17:00:00-05:00')?.headline).toBe('FINAL');
   });
 
   it('carries both records and the kickoff on the preview card', () => {
