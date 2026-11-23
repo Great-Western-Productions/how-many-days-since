@@ -32,6 +32,21 @@ export function gamePhase(game: Pick<Game, 'start'>, now: Date): GamePhase {
   return columbusCalendarDay(now) === columbusCalendarDay(kickoff) ? 'game-day' : 'upcoming';
 }
 
+/**
+ * When the phase next changes: midnight Eastern on game day, kickoff, then
+ * `FINAL_AFTER_MS` past it. `null` once final, since only a new next game in
+ * the record moves the page on from there.
+ */
+export function nextPhaseChange(game: Pick<Game, 'start'>, now: Date): Date | null {
+  const kickoff = new Date(game.start);
+  // `start` carries its Eastern offset, so its date and offset give midnight.
+  const gameDayStart = new Date(`${game.start.slice(0, 10)}T00:00:00${game.start.slice(19)}`);
+  for (const change of [gameDayStart, kickoff, new Date(kickoff.getTime() + FINAL_AFTER_MS)]) {
+    if (change.getTime() > now.getTime()) return change;
+  }
+  return null;
+}
+
 /** "NOVEMBER 28, 2026 · NOON ET · COLUMBUS", the line under the countdown heading. */
 export function kickoffLine(game: Game): string {
   return `${nextGameDateLabel(game)} · ${game.time} · ${game.location}`.toUpperCase();

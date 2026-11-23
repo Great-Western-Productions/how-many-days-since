@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import games from '../../data/rivalry-games.json';
 import {
   DEFAULT_OG_IMAGE_PATH,
+  OG_CACHE_SECONDS,
   headlineText,
+  ogCacheSeconds,
   ogCardAlt,
   ogImagePathFor,
   pagePathForOgRoute,
@@ -182,5 +184,33 @@ describe('ogCardAlt', () => {
         team: 'rivalry',
       })
     ).toBe('COUNTDOWN. 103 DAYS. OHIO STATE 27–9. Columbus');
+  });
+});
+
+describe('ogCacheSeconds', () => {
+  const at = (iso: string) => ogCacheSeconds('/countdown', new Date(iso));
+
+  it('keeps every other card for a day', () => {
+    expect(ogCacheSeconds('/', new Date('2026-11-28T13:00:00-05:00'))).toBe(OG_CACHE_SECONDS);
+    expect(ogCacheSeconds('/record/2024')).toBe(OG_CACHE_SECONDS);
+  });
+
+  it('expires the countdown card at the next phase change', () => {
+    // Weeks out, a day is the cap.
+    expect(at('2026-11-01T12:00:00-05:00')).toBe(OG_CACHE_SECONDS);
+    // Two hours before game day starts at midnight Eastern.
+    expect(at('2026-11-27T22:00:00-05:00')).toBe(2 * 60 * 60);
+    // Game day, an hour before kickoff.
+    expect(at('2026-11-28T11:00:00-05:00')).toBe(60 * 60);
+    // In progress, an hour before it turns final.
+    expect(at('2026-11-28T15:00:00-05:00')).toBe(60 * 60);
+  });
+
+  it('holds a fetch just before a change for a minute', () => {
+    expect(at('2026-11-28T11:59:50-05:00')).toBe(60);
+  });
+
+  it('holds the final card ten minutes, until a deploy moves the next game', () => {
+    expect(at('2026-11-28T17:00:00-05:00')).toBe(600);
   });
 });
