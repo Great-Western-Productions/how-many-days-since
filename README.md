@@ -83,6 +83,23 @@ The sync script accepts only the `rivalry-lab-public-snapshot-v2` schema, requir
 
 Review and commit the resulting `src/data/rivalry-lab-snapshot.json` with the public-site change. This explicit release step prevents an unreviewed model refresh from changing production behavior.
 
+## Game preview refresh
+
+`/preview/` reads `src/data/rivalry-preview.json`, a derived file exported from the same private workspace. Refresh it after each weekend of games:
+
+```sh
+# In ~/src/cfb/cfb_simulator:
+npm run import:cfbd:season -- 2026
+npm run product:export-preview
+
+# In this repository:
+npm run sync:preview -- ../cfb_simulator/exports/rivalry-preview.json
+```
+
+The sync script accepts only the `rivalry-preview-v1` schema, requires each of the seven tape bands once, and rejects files carrying private warehouse keys. Review and commit the resulting JSON with the public-site change.
+
+The page takes its kickoff, site and records from that file alone. It keeps describing the game the file was built for after `src/lib/next-rivalry-game.ts` moves to the following season.
+
 ## Tests
 
 Unit tests cover the core date-calculation and time-formatting utilities in `src/lib/days.ts`:
