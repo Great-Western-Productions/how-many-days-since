@@ -43,6 +43,16 @@ describe('resolveOgCard', () => {
     expect(card?.team).toBe('rivalry');
   });
 
+  it('counts the days since the last Ohio State win on its own card', () => {
+    const card = resolveOgCard('/days-since-ohio-state-beat-michigan', NOW);
+
+    expect(card?.eyebrow).toBe('HOW MANY DAYS SINCE OHIO STATE BEAT MICHIGAN?');
+    // Nov 29 2025 → Aug 17 2026, Eastern calendar days.
+    expect(card?.metric).toEqual({ value: '261', unit: 'DAYS' });
+    expect(card?.detail).toBe('Last Ohio State win: 27-9 in Ann Arbor · November 29, 2025');
+    expect(card?.team).toBe('ohio-state');
+  });
+
   it('reports the meeting count on the record card', () => {
     const card = resolveOgCard('/record', NOW);
 

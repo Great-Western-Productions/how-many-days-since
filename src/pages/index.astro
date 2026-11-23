@@ -6,6 +6,7 @@ import { calcDaysSince } from '../lib/days';
 import { formatCount } from '../lib/share-graphic';
 import { nextRivalryGame } from '../lib/next-rivalry-game';
 import { earliestGame, lastMichiganWin, lastOhioStateWin, latestGame } from '../lib/rivalry-anchors';
+import { GWA_FILM_STILL, GWA_PLACEMENT, gwaFilmEmbedUrl, gwaSiteUrl } from '../lib/gwa-house-ad';
 
 // Both anchors come out of the record, so no date lives in this template.
 const now = new Date();
@@ -50,17 +51,41 @@ const faqSchema = {
 <SiteShell active="count" title={title} description={description} schema={faqSchema}>
   <ShareGraphic slot="nav-share" referenceDate={lastMichiganWin.iso} siteUrl="https://howmanydayssincemichiganhasbeatenohiostate.com" />
   <section class="count" data-live-count data-reference-date={lastMichiganWin.iso}><h1>HOW MANY DAYS SINCE <span class="mich">MICHIGAN</span> HAS BEATEN <span class="osu">OHIO STATE</span>? <small class="h1-reverse">AND HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</small></h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="days_count">{formatCount(days)}</strong> <span>DAYS</span></p><p class="last">Last <b class="mich">Michigan</b> win: {lastMichiganWin.longDate} - {lastMichiganWin.score}, {lastMichiganWin.location}.<br />Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextRivalryGame.date} - <span class="osu">{nextRivalryGame.location}</span>.</a></p></section>
-  <section class="reverse-count" data-reverse-count data-reference-date={lastOhioStateWin.iso} aria-labelledby="reverse-heading"><h2 id="reverse-heading">DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span></h2><p class="reverse-counter" aria-live="polite"><strong id="reverse_days_count">{formatCount(reverseDays)}</strong> <span>DAYS</span></p><p class="last">Ohio State won {lastOhioStateWin.score} in {lastOhioStateWin.location} on {lastOhioStateWin.longDate}.</p></section>
+  <section class="reverse-count" data-reverse-count data-reference-date={lastOhioStateWin.iso} aria-labelledby="reverse-heading"><h2 id="reverse-heading">DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span></h2><p class="reverse-counter" aria-live="polite"><strong id="reverse_days_count">{formatCount(reverseDays)}</strong> <span>DAYS</span></p><p class="last">Ohio State won {lastOhioStateWin.score} in {lastOhioStateWin.location} on {lastOhioStateWin.longDate}.<br /><a class="reverse-page-link" href="/days-since-ohio-state-beat-michigan/">The Ohio State count on its own page →</a></p></section>
   <section class="stat-box"><div><strong class={newest.winner === 'Ohio State' ? 'osu' : newest.winner === 'Michigan' ? 'mich' : undefined}>{newest.winner === 'Ohio State' ? 'OSU' : newest.winner === 'Michigan' ? 'MICH' : 'TIE'} {newest.wScore}-{newest.lScore}</strong><small>THE GAME, {newest.year} · {newest.location?.toUpperCase()}</small></div><div><strong>{totals.michigan}-{totals.ohioState}-{totals.ties}</strong><small>ALL-TIME SERIES (M-OSU-T), {oldest.year}-{newest.year}</small></div><div><strong class="osu">{since2012.ohioState}-{since2012.michigan}</strong><small>OHIO STATE SINCE 2012</small></div></section>
-  <section class="featured-merch" aria-labelledby="merch-heading"><img src="/images/products/script-in-the-snow.jpg" alt="Script in the Snow 2025 Rivalry Game commemorative tee" /><div><p>RIVALRY LAB MERCH</p><h2 id="merch-heading">SCRIPT IN THE SNOW</h2><span>THE 2025 RIVALRY GAME COMMEMORATIVE TEE</span><a href="https://gwpworkshop.com/products/script-in-the-snow-the-2025-rivalry-game-commemorative-tee" target="_blank" rel="noopener noreferrer" data-track-event="merch_product_opened" data-track-properties={JSON.stringify({ product: 'script-in-the-snow', placement: 'home_featured' })}>SHOP THE 2025 COMMEMORATIVE TEE →</a></div></section>
+  <section class="gwa-ad" aria-labelledby="gwa-ad-heading" data-gwa-ad data-embed-url={gwaFilmEmbedUrl()} data-placement={GWA_PLACEMENT}>
+    <div class="gwa-ad-media" data-gwa-media><button type="button" class="gwa-ad-poster" data-gwa-play aria-label="Play the GWA Day 2026 film"><img src={GWA_FILM_STILL} alt="GWA Day 2026 title card" width="1200" height="675" loading="lazy" decoding="async" /><span class="gwa-ad-play-icon" aria-hidden="true"></span></button></div>
+    <div class="gwa-ad-copy"><p>From Great Western Productions</p><h2 id="gwa-ad-heading">Rivalries don't stop in late November</h2><span>Meet the Great Western Wrestling Alliance: feuds, belts and bad blood from 1957 to 1993. Three years in, 20 new wrestlers just joined the Worldbook.</span><div class="gwa-ad-actions"><button type="button" data-gwa-play>Watch the film</button><a href={gwaSiteUrl()} target="_blank" rel="noopener" data-track-event="gwa_site_opened" data-track-properties={JSON.stringify({ placement: GWA_PLACEMENT })}>Visit gwawrestling.com →</a></div></div>
+  </section>
+  <section class="featured-merch" aria-labelledby="merch-heading"><img src="/images/products/script-in-the-snow.jpg" alt="Script in the Snow 2025 Rivalry Game commemorative tee" /><div><p>RIVALRY LAB MERCH</p><h2 id="merch-heading">SCRIPT IN THE SNOW</h2><span>FROM LAST YEAR'S GAME: OHIO STATE <b class="tee-score">27-9</b> IN THE SNOW.</span><a href="https://gwpworkshop.com/products/script-in-the-snow-the-2025-rivalry-game-commemorative-tee" target="_blank" rel="noopener noreferrer" data-track-event="merch_product_opened" data-track-properties={JSON.stringify({ product: 'script-in-the-snow', placement: 'home_featured' })}>SHOP LAST YEAR'S TEE →</a></div></section>
 </SiteShell>
 
 <script>
   import { calcDaysSince } from '../lib/days';
   import { formatCount } from '../lib/share-graphic';
-  import { trackMarkedLinks } from '../lib/client/analytics';
+  import { trackEvent, trackMarkedLinks } from '../lib/client/analytics';
 
   trackMarkedLinks();
+
+  // The GWA film loads only on request: the poster and the "Watch the film"
+  // button both swap the still for the player, once.
+  const gwaAd = document.querySelector<HTMLElement>('[data-gwa-ad]');
+  const gwaMedia = gwaAd?.querySelector<HTMLElement>('[data-gwa-media]');
+  const playGwaFilm = (event: Event) => {
+    if (!gwaAd || !gwaMedia || gwaAd.dataset.playing) return;
+    gwaAd.dataset.playing = 'true';
+    const player = document.createElement('iframe');
+    player.src = gwaAd.dataset.embedUrl ?? '';
+    player.title = 'GWA Day 2026';
+    player.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    player.allowFullscreen = true;
+    player.referrerPolicy = 'strict-origin-when-cross-origin';
+    gwaMedia.replaceChildren(player);
+    const trigger = (event.currentTarget as HTMLElement).classList.contains('gwa-ad-poster') ? 'poster' : 'button';
+    trackEvent('gwa_film_played', { placement: gwaAd.dataset.placement ?? '', trigger });
+    if (trigger === 'button') gwaMedia.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+  gwaAd?.querySelectorAll('[data-gwa-play]').forEach((control) => control.addEventListener('click', playGwaFilm));
   const liveCount = document.querySelector<HTMLElement>('[data-live-count]');
   const reverseCount = document.querySelector<HTMLElement>('[data-reverse-count]');
   const referenceDate = new Date(liveCount?.dataset.referenceDate ?? '');
@@ -87,6 +112,7 @@ const faqSchema = {
   .reverse-counter strong { font-size:min(72px,12vw); color:#bb0000; }
   .reverse-counter span { font-size:min(24px,4vw); }
   .reverse-count .last { margin:0; }
+  .reverse-page-link { color:#bb0000; font-weight:700; }
   .next-game-link { color:inherit; text-decoration:none; }
   .next-game-link:hover,.next-game-link:focus-visible { text-decoration:none; }
   .next-game-link:hover .osu,.next-game-link:focus-visible .osu { background:#bb0000; color:#d9dce1; }
@@ -95,7 +121,28 @@ const faqSchema = {
   .featured-merch div { display:flex; flex-direction:column; justify-content:center; padding:36px; }
   .featured-merch p,.featured-merch span { color:#6b717c; font-size:12px; font-weight:700; letter-spacing:.06em; }
   .featured-merch p { margin:0 0 10px; color:#bb0000; }
+  .featured-merch .tee-score { font:inherit; color:inherit; white-space:nowrap; }
   .featured-merch h2 { margin:0 0 10px; font:34px 'Archivo Black'; line-height:1; }
   .featured-merch a { align-self:flex-start; margin-top:24px; padding:12px 16px; background:#bb0000; color:#fff; font-size:12px; font-weight:700; text-decoration:none; }
-  @media (max-width:640px) { .featured-merch { grid-template-columns:1fr; } .featured-merch img { min-height:0; } .featured-merch div { padding:26px; } .h1-reverse { font-size:16px; } }
+  .gwa-ad { display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr); margin:32px 0 0; border:3px solid #111; background:#fff; }
+  /* The panel matches the still's vignette, so a card taller than 16:9 shows
+     the whole title card with no visible band instead of cropping it. */
+  .gwa-ad-media { display:flex; align-items:center; background:#10244f; }
+  .gwa-ad-poster { position:relative; display:block; width:100%; padding:0; border:0; background:none; cursor:pointer; }
+  /* The player is created by the script, so it never carries Astro's scope attribute. */
+  .gwa-ad-poster img,.gwa-ad-media :global(iframe) { display:block; width:100%; aspect-ratio:16 / 9; height:auto; border:0; }
+  .gwa-ad-play-icon { position:absolute; left:18px; bottom:18px; width:56px; height:56px; border:3px solid #111; border-radius:50%; background:#d8a94a; box-shadow:4px 4px 0 #111; transition:transform .15s; }
+  .gwa-ad-play-icon::after { content:''; position:absolute; left:20px; top:14px; border-style:solid; border-width:11px 0 11px 18px; border-color:transparent transparent transparent #111; }
+  .gwa-ad-poster:hover .gwa-ad-play-icon,.gwa-ad-poster:focus-visible .gwa-ad-play-icon { transform:scale(1.08); }
+  .gwa-ad-copy { display:flex; flex-direction:column; justify-content:center; padding:32px; }
+  .gwa-ad-copy p { margin:0 0 10px; color:#1d4fc4; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+  .gwa-ad-copy h2 { margin:0 0 12px; font:30px 'Archivo Black'; line-height:1.05; text-transform:uppercase; }
+  .gwa-ad-copy span { color:#3b4048; font-size:15px; line-height:1.5; }
+  .gwa-ad-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .gwa-ad-actions button,.gwa-ad-actions a { padding:12px 16px; border:2px solid #111; font:700 12px 'IBM Plex Sans', sans-serif; letter-spacing:.04em; text-transform:uppercase; text-decoration:none; cursor:pointer; }
+  .gwa-ad-actions button { background:#1d4fc4; border-color:#1d4fc4; color:#fff; }
+  .gwa-ad-actions a { background:#fff; color:#111; }
+  .gwa-ad-actions button:hover,.gwa-ad-actions button:focus-visible { background:#0b2b7a; border-color:#0b2b7a; }
+  .gwa-ad-actions a:hover,.gwa-ad-actions a:focus-visible { background:#111; color:#fff; }
+  @media (max-width:640px) { .gwa-ad { grid-template-columns:1fr; } .gwa-ad-copy { padding:24px; } .gwa-ad-copy h2 { font-size:26px; } .gwa-ad-play-icon { left:10px; bottom:10px; transform:scale(.75); transform-origin:left bottom; } .gwa-ad-poster:hover .gwa-ad-play-icon,.gwa-ad-poster:focus-visible .gwa-ad-play-icon { transform:scale(.82); } .featured-merch { grid-template-columns:1fr; } .featured-merch img { min-height:0; } .featured-merch div { padding:26px; } .h1-reverse { font-size:16px; } }
 </style>

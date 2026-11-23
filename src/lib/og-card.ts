@@ -10,7 +10,7 @@
  */
 import games from '../data/rivalry-games.json';
 import { calcDaysSince } from './days';
-import { lastMichiganWin } from './rivalry-anchors';
+import { lastMichiganWin, lastOhioStateWin } from './rivalry-anchors';
 import { nextRivalryGame } from './next-rivalry-game';
 import { TEAM_NAMES, cityFor, formatRecord as formatPreviewRecord, kickoffDate, rivalryPreview } from './preview';
 import { teamIdFor, teamNameFor, formatRecord, type RivalryTeam } from './rivalry-archive';
@@ -84,6 +84,17 @@ function homeCard(now: Date): OgCard {
     metric: { value: formatCount(days), unit: 'DAYS' },
     detail: `Latest meeting: ${latestGame.winner} ${latestGame.wScore}, ${latestGame.loser} ${latestGame.lScore} · ${latestGame.date}, ${latestGame.year}`,
     // The streak belongs to Ohio State, so the card wears scarlet.
+    team: 'ohio-state',
+  };
+}
+
+/** The Ohio State side of the question, for its own page. */
+function ohioStateCountCard(now: Date): OgCard {
+  const days = calcDaysSince(lastOhioStateWin.kickoff, now);
+  return {
+    eyebrow: 'HOW MANY DAYS SINCE OHIO STATE BEAT MICHIGAN?',
+    metric: { value: formatCount(days), unit: 'DAYS' },
+    detail: `Last Ohio State win: ${lastOhioStateWin.score} in ${lastOhioStateWin.location} · ${lastOhioStateWin.longDate}`,
     team: 'ohio-state',
   };
 }
@@ -185,6 +196,7 @@ export function resolveOgCard(pathname: string, now: Date = new Date()): OgCard 
   if (path === '/') return homeCard(now);
   if (path === '/countdown') return countdownCard(now);
   if (path === '/preview') return previewCard();
+  if (path === '/days-since-ohio-state-beat-michigan') return ohioStateCountCard(now);
   if (path === '/record') return recordCard();
   if (path === '/rivalry-lab') {
     return {
