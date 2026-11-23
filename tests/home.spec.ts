@@ -135,3 +135,45 @@ test.describe('Count', () => {
     expect(ribbon!.x + ribbon!.width).toBeCloseTo(content!.x + content!.width - 40, 0);
   });
 });
+
+test.describe('GWA house ad', () => {
+  test('shows the GWA Day card under the counter without loading YouTube', async ({ page }) => {
+    const youtube: string[] = [];
+    page.on('request', (request) => { if (/youtube|ytimg|googlevideo/.test(request.url())) youtube.push(request.url()); });
+    await page.goto('/');
+
+    const ad = page.locator('[data-gwa-ad]');
+    await expect(ad.getByRole('heading', { name: /rivalries don't stop in late november/i })).toBeVisible();
+    await expect(ad.locator('img')).toHaveAttribute('src', '/images/gwa/gwa-day-2026.jpg');
+    await expect(ad.locator('iframe')).toHaveCount(0);
+    const order = await page.evaluate(() => [...document.querySelectorAll('main > section')].map((section) => section.className.split(' ')[0]));
+    expect(order.indexOf('gwa-ad')).toBe(order.indexOf('stat-box') + 1);
+    expect(youtube).toEqual([]);
+  });
+
+  test('tags the gwawrestling.com link and tracks it', async ({ page }) => {
+    await page.goto('/');
+    const link = page.locator('[data-gwa-ad]').getByRole('link', { name: /visit gwawrestling\.com/i });
+    const href = new URL((await link.getAttribute('href'))!);
+    expect(href.origin).toBe('https://www.gwawrestling.com');
+    expect(href.searchParams.get('utm_source')).toBe('howmanydayssince');
+    expect(href.searchParams.get('utm_campaign')).toBe('gwa_day_2026');
+
+    await page.route('https://www.gwawrestling.com/**', (route) => route.fulfill({ body: 'ok' }));
+    await link.click();
+    await expect.poll(() => capturedEvents(page)).toContainEqual(['event', 'gwa_site_opened', { placement: 'home_house_ad' }]);
+  });
+
+  for (const [trigger, control] of [['poster', 'Play the GWA Day 2026 film'], ['button', 'Watch the film']] as const) {
+    test(`loads the film player from the ${trigger} and tracks the play`, async ({ page }) => {
+      await page.route(/youtube-nocookie\.com/, (route) => route.fulfill({ contentType: 'text/html', body: '<html></html>' }));
+      await page.goto('/');
+      const ad = page.locator('[data-gwa-ad]');
+      await ad.getByRole('button', { name: control, exact: true }).click();
+
+      await expect(ad.locator('iframe')).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/LKhoHMmcpkc\?autoplay=1/);
+      await expect(ad.locator('img')).toHaveCount(0);
+      await expect.poll(() => capturedEvents(page)).toContainEqual(['event', 'gwa_film_played', { placement: 'home_house_ad', trigger }]);
+    });
+  }
+});
