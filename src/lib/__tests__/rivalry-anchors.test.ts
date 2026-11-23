@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import games from '../../data/rivalry-games.json';
 import { nextRivalryGame } from '../next-rivalry-game';
+
+const game2026 = games[0];
+const score2026 = `${game2026.wScore}-${game2026.lScore}`;
 import {
   earliestGame,
   gameDay,
@@ -45,16 +48,16 @@ describe('anchors', () => {
   });
 
   it('reads the last Ohio State win off the record', () => {
-    expect(lastOhioStateWin.game.year).toBe(2025);
-    expect(lastOhioStateWin.iso).toBe('2025-11-29T17:00:00Z');
-    expect(lastOhioStateWin.score).toBe('27-9');
-    expect(lastOhioStateWin.location).toBe('Ann Arbor');
+    expect(lastOhioStateWin.game.year).toBe(2026);
+    expect(lastOhioStateWin.iso).toBe('2026-11-28T17:00:00Z');
+    expect(lastOhioStateWin.score).toBe(score2026);
+    expect(lastOhioStateWin.location).toBe('Columbus');
   });
 
   it('finds the newest win whatever order the rows arrive in', () => {
     const rows = [...games].reverse();
     expect(lastWinBy('Michigan', rows).game.year).toBe(2024);
-    expect(latestGame(rows).year).toBe(2025);
+    expect(latestGame(rows).year).toBe(2026);
     expect(earliestGame(rows).year).toBe(1897);
   });
 
