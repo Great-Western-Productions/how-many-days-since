@@ -197,20 +197,20 @@ describe('ogCacheSeconds', () => {
 
   it('expires the countdown card at the next phase change', () => {
     // Weeks out, a day is the cap.
-    expect(at('2026-11-01T12:00:00-05:00')).toBe(OG_CACHE_SECONDS);
+    expect(at('2027-11-01T12:00:00-05:00')).toBe(OG_CACHE_SECONDS);
     // Two hours before game day starts at midnight Eastern.
-    expect(at('2026-11-27T22:00:00-05:00')).toBe(2 * 60 * 60);
+    expect(at('2027-11-26T22:00:00-05:00')).toBe(2 * 60 * 60);
     // Game day, an hour before kickoff.
-    expect(at('2026-11-28T11:00:00-05:00')).toBe(60 * 60);
+    expect(at('2027-11-27T11:00:00-05:00')).toBe(60 * 60);
     // In progress, an hour before it turns final.
-    expect(at('2026-11-28T15:00:00-05:00')).toBe(60 * 60);
+    expect(at('2027-11-27T15:00:00-05:00')).toBe(60 * 60);
   });
 
   it('holds a fetch just before a change for a minute', () => {
-    expect(at('2026-11-28T11:59:50-05:00')).toBe(60);
+    expect(at('2027-11-27T11:59:50-05:00')).toBe(60);
   });
 
   it('holds the final card ten minutes, until a deploy moves the next game', () => {
-    expect(at('2026-11-28T17:00:00-05:00')).toBe(600);
+    expect(at('2027-11-27T17:00:00-05:00')).toBe(600);
   });
 });
