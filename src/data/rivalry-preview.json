@@ -1,0 +1,628 @@
+{
+  "schemaVersion": "rivalry-preview-v1",
+  "redZoneDerivationVersion": "drive-net-yards-v1",
+  "evidenceType": "DERIVED",
+  "generatedAt": "2026-11-23T14:29:07.933Z",
+  "dataThrough": "2026-11-21",
+  "game": {
+    "season": 2026,
+    "date": "2026-11-28T17:00:00.000Z",
+    "homeTeamId": "ohio-state"
+  },
+  "coverage": {
+    "stats": {
+      "since": 2004,
+      "meetings": 21
+    },
+    "scores": {
+      "since": 1970,
+      "meetings": 53
+    }
+  },
+  "pollWeek": 13,
+  "teams": {
+    "ohio-state": {
+      "wins": 7,
+      "losses": 4,
+      "ties": 0,
+      "games": 11,
+      "boxGames": 11,
+      "apRank": 25,
+      "pointsPerGame": 34.3,
+      "pointsAllowedPerGame": 19.5
+    },
+    "michigan": {
+      "wins": 6,
+      "losses": 5,
+      "ties": 0,
+      "games": 11,
+      "boxGames": 11,
+      "apRank": null,
+      "pointsPerGame": 18.3,
+      "pointsAllowedPerGame": 17.5
+    }
+  },
+  "tape": [
+    {
+      "id": "first-downs",
+      "label": "First downs",
+      "unit": "per game",
+      "sides": {
+        "ohio-state": {
+          "offense": 23.5455,
+          "defense": 16.9091,
+          "net": 6.6364
+        },
+        "michigan": {
+          "offense": 16.2727,
+          "defense": 15.3636,
+          "net": 0.9091
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 5.7273
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 17,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2004,
+        2006,
+        2021,
+        2024
+      ]
+    },
+    {
+      "id": "scoring",
+      "label": "Scoring",
+      "unit": "points per game",
+      "sides": {
+        "ohio-state": {
+          "offense": 34.2727,
+          "defense": 19.5455,
+          "net": 14.7273
+        },
+        "michigan": {
+          "offense": 18.2727,
+          "defense": 17.5455,
+          "net": 0.7273
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 14
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 15,
+          "of": 21
+        },
+        {
+          "since": 1970,
+          "won": 34,
+          "of": 53
+        }
+      ],
+      "missedSeasons": [
+        2004,
+        2016,
+        2018,
+        2021,
+        2022,
+        2024
+      ]
+    },
+    {
+      "id": "rushing",
+      "label": "Rushing",
+      "unit": "yards per carry",
+      "sides": {
+        "ohio-state": {
+          "offense": 4.0437,
+          "defense": 3.2157,
+          "net": 0.828
+        },
+        "michigan": {
+          "offense": 3.6683,
+          "defense": 2.9713,
+          "net": 0.697
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 0.1309
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 14,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2004,
+        2006,
+        2014,
+        2018,
+        2021,
+        2024,
+        2025
+      ]
+    },
+    {
+      "id": "red-zone",
+      "label": "Red zone",
+      "unit": "scoring rate",
+      "sides": {
+        "ohio-state": {
+          "offense": 0.9032,
+          "defense": 0.9063,
+          "net": -0.003
+        },
+        "michigan": {
+          "offense": 0.7714,
+          "defense": 0.9167,
+          "net": -0.1452
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 0.1422
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 14,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2006,
+        2014,
+        2015,
+        2016,
+        2018,
+        2023,
+        2024
+      ]
+    },
+    {
+      "id": "third-down",
+      "label": "Third down",
+      "unit": "conversion rate",
+      "sides": {
+        "ohio-state": {
+          "offense": 0.4532,
+          "defense": 0.4204,
+          "net": 0.0329
+        },
+        "michigan": {
+          "offense": 0.4,
+          "defense": 0.35,
+          "net": 0.05
+        }
+      },
+      "edge": {
+        "teamId": "michigan",
+        "margin": 0.0171
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 13,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2004,
+        2012,
+        2015,
+        2016,
+        2018,
+        2021,
+        2022,
+        2024
+      ]
+    },
+    {
+      "id": "passing",
+      "label": "Passing",
+      "unit": "yards per pass attempt",
+      "sides": {
+        "ohio-state": {
+          "offense": 9.3092,
+          "defense": 6.0453,
+          "net": 3.2639
+        },
+        "michigan": {
+          "offense": 6.678,
+          "defense": 6.5186,
+          "net": 0.1594
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 3.1045
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 12,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2012,
+        2013,
+        2015,
+        2016,
+        2018,
+        2021,
+        2022,
+        2023,
+        2024
+      ]
+    },
+    {
+      "id": "turnovers",
+      "label": "Turnovers",
+      "unit": "per game",
+      "sides": {
+        "ohio-state": {
+          "offense": 1.3636,
+          "defense": 1.0909,
+          "net": -0.2727
+        },
+        "michigan": {
+          "offense": 1.8182,
+          "defense": 1.0909,
+          "net": -0.7273
+        }
+      },
+      "edge": {
+        "teamId": "ohio-state",
+        "margin": 0.4545
+      },
+      "history": [
+        {
+          "since": 2004,
+          "won": 12,
+          "of": 21
+        }
+      ],
+      "missedSeasons": [
+        2004,
+        2005,
+        2006,
+        2007,
+        2011,
+        2018,
+        2021,
+        2022,
+        2024
+      ]
+    }
+  ],
+  "home": [
+    {
+      "since": 2004,
+      "won": 11,
+      "of": 21
+    },
+    {
+      "since": 1970,
+      "won": 30,
+      "of": 53
+    }
+  ],
+  "pastTapes": [
+    {
+      "season": 2004,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 2,
+        "michigan": 5
+      }
+    },
+    {
+      "season": 2005,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 6,
+        "michigan": 1
+      }
+    },
+    {
+      "season": 2006,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 3,
+        "michigan": 4
+      }
+    },
+    {
+      "season": 2007,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 6,
+        "michigan": 1
+      }
+    },
+    {
+      "season": 2008,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2009,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2010,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2011,
+      "winner": "michigan",
+      "edges": {
+        "ohio-state": 1,
+        "michigan": 6
+      }
+    },
+    {
+      "season": 2012,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 5,
+        "michigan": 2
+      }
+    },
+    {
+      "season": 2013,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 6,
+        "michigan": 1
+      }
+    },
+    {
+      "season": 2014,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 5,
+        "michigan": 2
+      }
+    },
+    {
+      "season": 2015,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 4,
+        "michigan": 3
+      }
+    },
+    {
+      "season": 2016,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 3,
+        "michigan": 4
+      }
+    },
+    {
+      "season": 2017,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2018,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 1,
+        "michigan": 6
+      }
+    },
+    {
+      "season": 2019,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2021,
+      "winner": "michigan",
+      "edges": {
+        "ohio-state": 6,
+        "michigan": 1
+      }
+    },
+    {
+      "season": 2022,
+      "winner": "michigan",
+      "edges": {
+        "ohio-state": 4,
+        "michigan": 3
+      }
+    },
+    {
+      "season": 2023,
+      "winner": "michigan",
+      "edges": {
+        "ohio-state": 2,
+        "michigan": 5
+      }
+    },
+    {
+      "season": 2024,
+      "winner": "michigan",
+      "edges": {
+        "ohio-state": 7,
+        "michigan": 0
+      }
+    },
+    {
+      "season": 2025,
+      "winner": "ohio-state",
+      "edges": {
+        "ohio-state": 6,
+        "michigan": 1
+      }
+    }
+  ],
+  "twins": [
+    {
+      "season": 1984,
+      "distance": 0.93,
+      "homeTeamId": "ohio-state",
+      "winner": "ohio-state",
+      "score": {
+        "ohio-state": 21,
+        "michigan": 6
+      },
+      "records": {
+        "ohio-state": {
+          "wins": 8,
+          "losses": 2,
+          "ties": 0
+        },
+        "michigan": {
+          "wins": 6,
+          "losses": 4,
+          "ties": 0
+        }
+      }
+    },
+    {
+      "season": 2012,
+      "distance": 1.53,
+      "homeTeamId": "ohio-state",
+      "winner": "ohio-state",
+      "score": {
+        "ohio-state": 26,
+        "michigan": 21
+      },
+      "records": {
+        "ohio-state": {
+          "wins": 11,
+          "losses": 0,
+          "ties": 0
+        },
+        "michigan": {
+          "wins": 8,
+          "losses": 3,
+          "ties": 0
+        }
+      }
+    },
+    {
+      "season": 1998,
+      "distance": 1.63,
+      "homeTeamId": "ohio-state",
+      "winner": "ohio-state",
+      "score": {
+        "ohio-state": 31,
+        "michigan": 16
+      },
+      "records": {
+        "ohio-state": {
+          "wins": 9,
+          "losses": 1,
+          "ties": 0
+        },
+        "michigan": {
+          "wins": 8,
+          "losses": 2,
+          "ties": 0
+        }
+      }
+    }
+  ],
+  "commonOpponents": {
+    "rows": [
+      {
+        "opponent": "Iowa",
+        "ohio-state": {
+          "site": "away",
+          "date": "2026-10-03",
+          "pointsFor": 31,
+          "pointsAgainst": 14
+        },
+        "michigan": {
+          "site": "home",
+          "date": "2026-09-26",
+          "pointsFor": 19,
+          "pointsAgainst": 20
+        }
+      },
+      {
+        "opponent": "Indiana",
+        "ohio-state": {
+          "site": "away",
+          "date": "2026-10-17",
+          "pointsFor": 19,
+          "pointsAgainst": 15
+        },
+        "michigan": {
+          "site": "home",
+          "date": "2026-10-24",
+          "pointsFor": 6,
+          "pointsAgainst": 13
+        }
+      },
+      {
+        "opponent": "Oregon",
+        "ohio-state": {
+          "site": "home",
+          "date": "2026-11-07",
+          "pointsFor": 28,
+          "pointsAgainst": 41
+        },
+        "michigan": {
+          "site": "away",
+          "date": "2026-11-14",
+          "pointsFor": 7,
+          "pointsAgainst": 31
+        }
+      }
+    ],
+    "averageMargin": {
+      "ohio-state": 2.7,
+      "michigan": -10.7
+    },
+    "edge": "ohio-state",
+    "history": [
+      {
+        "since": 2004,
+        "won": 14,
+        "of": 21
+      },
+      {
+        "since": 1970,
+        "won": 33,
+        "of": 53
+      }
+    ]
+  }
+}

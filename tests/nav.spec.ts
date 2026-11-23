@@ -10,7 +10,7 @@ test.describe('site navigation', () => {
 
     const nav = page.getByRole('navigation', { name: 'Site' });
     await expect(page.locator('.site-nav-toggle')).toBeHidden();
-    for (const label of ['COUNTDOWN', 'THE RECORD', 'RIVALRY LAB', 'MERCH']) {
+    for (const label of ['COUNTDOWN', 'PREVIEW', 'THE RECORD', 'RIVALRY LAB', 'MERCH']) {
       await expect(nav.getByRole('link', { name: label })).toBeVisible();
     }
 
@@ -123,7 +123,7 @@ test.describe('site navigation', () => {
     const nav = page.getByRole('navigation', { name: 'Site' });
     await expect(nav).not.toHaveClass(/collapsible/);
     await expect(page.locator('.site-nav-toggle')).toBeHidden();
-    for (const label of ['COUNTDOWN', 'THE RECORD', 'RIVALRY LAB', 'MERCH']) {
+    for (const label of ['COUNTDOWN', 'PREVIEW', 'THE RECORD', 'RIVALRY LAB', 'MERCH']) {
       await expect(nav.getByRole('link', { name: label })).toBeVisible();
     }
 

@@ -6,6 +6,7 @@ const SITE = 'https://howmanydayssincemichiganhasbeatenohiostate.com';
 const PAGES = [
   { path: '/', card: `${SITE}/og/home.png` },
   { path: '/countdown', card: `${SITE}/og/countdown.png` },
+  { path: '/preview', card: `${SITE}/og/preview.png` },
   {
     path: '/days-since-ohio-state-beat-michigan',
     card: `${SITE}/og/days-since-ohio-state-beat-michigan.png`,
@@ -130,7 +131,7 @@ test('links to methodology from the Rivalry Lab header', async ({ page }) => {
 });
 
 test('sends the slashless form of a page to its canonical with a 301', async ({ request }) => {
-  for (const path of ['/countdown', '/record', '/rivalry-lab', '/rivalry-lab/about', '/mo-carmen']) {
+  for (const path of ['/countdown', '/preview', '/record', '/rivalry-lab', '/rivalry-lab/about', '/mo-carmen']) {
     const response = await request.get(path, { maxRedirects: 0 });
     expect(response.status(), path).toBe(301);
     expect(response.headers()['location'], path).toMatch(new RegExp(`${path}/$`));

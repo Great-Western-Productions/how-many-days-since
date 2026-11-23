@@ -30,7 +30,7 @@ const isHome = canonical === `${site}/`;
 const webSiteSchema = isHome ? JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'How Many Days Since Michigan Has Beaten Ohio State?', url: site }) : undefined;
 const pageSchema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: canonical });
 const additionalSchema = schema ? JSON.stringify(schema) : undefined;
-const nav = [{ href: '/', label: 'Home', id: 'count', icon: true }, { href: '/countdown/', label: 'COUNTDOWN', id: 'countdown' }, { href: '/record/', label: 'THE RECORD', id: 'record' }, { href: '/rivalry-lab/', label: 'RIVALRY LAB', id: 'lab' }, { href: 'https://gwpworkshop.com/collections/rivalry-lab', label: 'MERCH', id: 'merch' }];
+const nav = [{ href: '/', label: 'Home', id: 'count', icon: true }, { href: '/countdown/', label: 'COUNTDOWN', id: 'countdown' }, { href: '/preview/', label: 'PREVIEW', id: 'preview' }, { href: '/record/', label: 'THE RECORD', id: 'record' }, { href: '/rivalry-lab/', label: 'RIVALRY LAB', id: 'lab' }, { href: 'https://gwpworkshop.com/collections/rivalry-lab', label: 'MERCH', id: 'merch' }];
 ---
 <!doctype html>
 <html lang="en">
@@ -129,7 +129,7 @@ const nav = [{ href: '/', label: 'Home', id: 'count', icon: true }, { href: '/co
       corner, so it must not take a slot in the nav row. */
    .site-nav-share { display:contents; }
 
-   /* Below 560px the five links outrun the bar, so all but the home icon
+   /* Below 560px the six links outrun the bar, so all but the home icon
       collapse behind the toggle and stack under it. Every rule here is gated
       on .collapsible, which the nav script adds once it can drive the toggle.
       Without it the bar keeps its scrolling row and stays usable. */
@@ -156,6 +156,7 @@ const nav = [{ href: '/', label: 'Home', id: 'count', icon: true }, { href: '/co
      .site-nav.collapsible.open a:nth-of-type(3) { transition-delay:.06s; }
      .site-nav.collapsible.open a:nth-of-type(4) { transition-delay:.09s; }
      .site-nav.collapsible.open a:nth-of-type(5) { transition-delay:.12s; }
+     .site-nav.collapsible.open a:nth-of-type(6) { transition-delay:.15s; }
      .site-nav.collapsible.open { padding-bottom:12px; }
      @media (prefers-reduced-motion:reduce) {
        .site-nav.collapsible a:not(.site-nav-home),.site-nav.collapsible .site-nav-share,

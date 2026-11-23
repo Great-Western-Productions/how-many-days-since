@@ -12,6 +12,7 @@ import games from '../data/rivalry-games.json';
 import { calcDaysSince } from './days';
 import { lastMichiganWin, lastOhioStateWin } from './rivalry-anchors';
 import { nextRivalryGame } from './next-rivalry-game';
+import { TEAM_NAMES, cityFor, formatRecord as formatPreviewRecord, kickoffDate, rivalryPreview } from './preview';
 import { teamIdFor, teamNameFor, formatRecord, type RivalryTeam } from './rivalry-archive';
 import { rivalrySnapshot, type TeamId } from './rivalry-snapshot';
 import { formatCount } from './share-graphic';
@@ -112,6 +113,17 @@ function countdownCard(now: Date): OgCard {
   };
 }
 
+function previewCard(): OgCard {
+  const { teams, game } = rivalryPreview;
+  const line = (teamId: TeamId) => `${TEAM_NAMES[teamId]} ${formatPreviewRecord(teams[teamId])}`;
+  return {
+    eyebrow: `OHIO STATE VS MICHIGAN · ${game.season}`,
+    headline: 'THE PREVIEW',
+    detail: `${line('ohio-state')} · ${line('michigan')} · ${kickoffDate(rivalryPreview)} · ${cityFor(game.homeTeamId)}`,
+    team: 'rivalry',
+  };
+}
+
 function recordCard(): OgCard {
   return {
     eyebrow: `EVERY MEETING · ${earliestGame.year}-${latestGame.year}`,
@@ -183,6 +195,7 @@ export function resolveOgCard(pathname: string, now: Date = new Date()): OgCard 
 
   if (path === '/') return homeCard(now);
   if (path === '/countdown') return countdownCard(now);
+  if (path === '/preview') return previewCard();
   if (path === '/days-since-ohio-state-beat-michigan') return ohioStateCountCard(now);
   if (path === '/record') return recordCard();
   if (path === '/rivalry-lab') {
