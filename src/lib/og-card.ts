@@ -109,7 +109,7 @@ function countdownCard(now: Date): OgCard {
     return { eyebrow: 'THE GAME', headline: 'GAME DAY', detail: when, team: 'rivalry' };
   }
   if (phase === 'in-progress') {
-    return { eyebrow: 'THE GAME', headline: 'IN PROGRESS', detail: `Kickoff ${kickoffInSentence(nextRivalryGame)} · ${nextRivalryGame.venue.name}`, team: 'rivalry' };
+    return { eyebrow: 'THE GAME', headline: 'IN PROGRESS', detail: /TBA/.test(nextRivalryGame.time) ? nextRivalryGame.venue.name : `Kickoff ${kickoffInSentence(nextRivalryGame)} · ${nextRivalryGame.venue.name}`, team: 'rivalry' };
   }
   if (phase === 'final') {
     return { eyebrow: 'THE GAME', headline: 'FINAL', detail: 'The result goes on the counts shortly', team: 'rivalry' };

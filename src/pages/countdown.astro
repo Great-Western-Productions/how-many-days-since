@@ -15,6 +15,7 @@ const eventSchema = gameEventSchema(nextRivalryGame, {
 // Rendered for the hour of the request; the script below moves it on while
 // the page stays open.
 const phase = gamePhase(nextRivalryGame, new Date());
+const kickoffSet = !/TBA/.test(nextRivalryGame.time);
 ---
 
 <SiteShell active="countdown" title={countdownTitle(nextRivalryGame)} description={countdownDescription(nextRivalryGame)} schema={eventSchema ?? undefined}>
@@ -23,7 +24,7 @@ const phase = gamePhase(nextRivalryGame, new Date());
     <h1>THE GAME</h1>
     <p class="kickoff">{kickoffLine(nextRivalryGame)}</p>
     {!nextRivalryGame.dateAnnounced && <p class="kickoff-note">The Big Ten has not announced the date. The clock counts to the expected Saturday.</p>}
-    <p class="game-day-line" data-phase-show="game-day">GAME DAY · KICKOFF AT {nextRivalryGame.time.toUpperCase()}</p>
+    <p class="game-day-line" data-phase-show="game-day">{kickoffSet ? `GAME DAY · KICKOFF AT ${nextRivalryGame.time.toUpperCase()}` : 'GAME DAY'}</p>
     <div class="countdown-clock" data-phase-show="upcoming game-day" aria-live="polite" aria-label="Time remaining until The Game">
       <div><strong data-countdown-days>0</strong><span>DAYS</span></div>
       <div><strong data-countdown-hours>00</strong><span>HOURS</span></div>
@@ -32,7 +33,7 @@ const phase = gamePhase(nextRivalryGame, new Date());
     </div>
     <div class="game-status" data-phase-show="in-progress">
       <p class="game-status-word">IN PROGRESS</p>
-      <p class="game-status-copy">Kickoff was {kickoffInSentence(nextRivalryGame)} at {nextRivalryGame.venue.name}. The counts change when the result goes up after the game.</p>
+      <p class="game-status-copy">{kickoffSet ? `Kickoff was ${kickoffInSentence(nextRivalryGame)} at ${nextRivalryGame.venue.name}.` : `The Game is under way at ${nextRivalryGame.venue.name}.`} The counts change when the result goes up after the game.</p>
     </div>
     <div class="game-status" data-phase-show="final">
       <p class="game-status-word">FINAL</p>

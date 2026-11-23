@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+import { nextRivalryGame } from '../src/lib/next-rivalry-game';
 
 test('publishes the next game countdown with canonical event metadata', async ({ page }) => {
   await page.goto('/countdown/');
@@ -35,35 +36,44 @@ test('links the home next-game line to the countdown and colors Columbus on hove
   await expect(nextGame).toHaveClass(/next-game-link/);
 });
 
+/**
+ * Times are offsets from the kickoff in the live next-game record, so these
+ * tests keep describing the states after the record moves to the next season.
+ */
+const KICKOFF = new Date(nextRivalryGame.start).getTime();
+const HOUR = 60 * 60 * 1_000;
+const kickoffSet = !/TBA/.test(nextRivalryGame.time);
+
 test.describe('game-day states', () => {
-  const visit = async (page: import('@playwright/test').Page, iso: string) => {
-    await page.clock.install({ time: new Date(iso) });
+  const visit = async (page: Page, offsetMs: number) => {
+    await page.clock.install({ time: new Date(KICKOFF + offsetMs) });
     await page.goto('/countdown/');
   };
-  const clock = (page: import('@playwright/test').Page) => page.locator('.countdown-clock');
+  const clock = (page: Page) => page.locator('.countdown-clock');
 
   test('runs the clock with no game-day line before game day', async ({ page }) => {
-    await visit(page, '2026-11-25T12:00:00-05:00');
+    await visit(page, -3 * 24 * HOUR);
 
     await expect(clock(page)).toBeVisible();
-    await expect(page.getByText(/^GAME DAY ·/)).toBeHidden();
+    await expect(page.getByText(/^GAME DAY/)).toBeHidden();
     await expect(page.getByText('IN PROGRESS', { exact: true })).toBeHidden();
   });
 
   test('keeps the clock under a game-day line on the morning of the game', async ({ page }) => {
-    await visit(page, '2026-11-28T09:00:30-05:00');
+    await visit(page, -3 * HOUR + 30_000);
 
-    await expect(page.getByText('GAME DAY · KICKOFF AT NOON ET')).toBeVisible();
+    const line = kickoffSet ? `GAME DAY · KICKOFF AT ${nextRivalryGame.time.toUpperCase()}` : 'GAME DAY';
+    await expect(page.getByText(line, { exact: true })).toBeVisible();
     await expect(clock(page)).toBeVisible();
     await expect(page.locator('[data-countdown-hours]')).toHaveText('02');
     await expect(page.locator('[data-countdown-minutes]')).toHaveText('59');
   });
 
   test('swaps the clock for an in-progress state at kickoff', async ({ page }) => {
-    await visit(page, '2026-11-28T13:30:00-05:00');
+    await visit(page, 1.5 * HOUR);
 
     await expect(page.getByText('IN PROGRESS', { exact: true })).toBeVisible();
-    await expect(page.getByText('Kickoff was noon ET at Ohio Stadium.', { exact: false })).toBeVisible();
+    await expect(page.getByText(`at ${nextRivalryGame.venue.name}.`, { exact: false })).toBeVisible();
     await expect(clock(page)).toBeHidden();
     await expect(page.getByRole('link', { name: 'Days since Michigan beat Ohio State →' })).toHaveAttribute('href', '/');
     await expect(page.getByRole('link', { name: 'Days since Ohio State beat Michigan →' })).toHaveAttribute(
@@ -73,7 +83,7 @@ test.describe('game-day states', () => {
   });
 
   test('calls it final four hours after kickoff', async ({ page }) => {
-    await visit(page, '2026-11-28T16:30:00-05:00');
+    await visit(page, 4.5 * HOUR);
 
     await expect(page.getByText('FINAL', { exact: true })).toBeVisible();
     await expect(page.getByText('IN PROGRESS', { exact: true })).toBeHidden();
@@ -82,7 +92,7 @@ test.describe('game-day states', () => {
   });
 
   test('moves from the clock to in progress while the page stays open', async ({ page }) => {
-    await visit(page, '2026-11-28T11:59:50-05:00');
+    await visit(page, -10_000);
     await expect(clock(page)).toBeVisible();
 
     await page.clock.runFor(15_000);
@@ -93,7 +103,7 @@ test.describe('game-day states', () => {
 
   test('fits a phone in the final state', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await visit(page, '2026-11-28T16:30:00-05:00');
+    await visit(page, 4.5 * HOUR);
 
     await expect(page.getByText('FINAL', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
