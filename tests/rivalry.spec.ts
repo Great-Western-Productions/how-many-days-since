@@ -64,7 +64,17 @@ test.describe('Record', () => {
     await expect(page.getByRole('link', { name: 'Michigan 2025 season' })).toHaveAttribute('href', '/teams/michigan/2025/');
     await expect(page.getByRole('link', { name: /CFBD advanced box score/i })).toHaveAttribute('href', /collegefootballdata\.com\/boxscore\//);
     await expect(page.getByRole('link', { name: /previous meeting: 2024/i })).toHaveAttribute('href', '/record/2024/');
-    await expect(page.getByRole('link', { name: /next meeting/i })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /next meeting: 2026/i })).toHaveAttribute('href', '/record/2026/');
+  });
+
+  test('renders the 2026 meeting from the record', async ({ page }) => {
+    await page.goto('/record/2026/');
+
+    await expect(page).toHaveTitle(/2026 Michigan vs Ohio State/i);
+    await expect(page.getByTestId('game-facts')).toContainText('Nov 28');
+    await expect(page.getByTestId('game-facts')).toContainText('Columbus');
+    await expect(page.getByRole('link', { name: /previous meeting: 2025/i })).toHaveAttribute('href', '/record/2025/');
+    expect((await page.request.get('/og/record/2026.png')).status()).toBe(200);
   });
 
   test('colors every tied meeting in neutral ink instead of a team palette', async ({ page }) => {
@@ -273,11 +283,11 @@ test.describe('Record', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 
-  test('renders all 121 meetings and filters them', async ({ page }) => {
+  test('renders all 122 meetings and filters them', async ({ page }) => {
     await page.goto('/record/');
     await expect(page).toHaveTitle(/All-Time Record/i);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('THE RECORD');
-    await expect(page.locator('[data-game]')).toHaveCount(121);
+    await expect(page.locator('[data-game]')).toHaveCount(122);
     await page.getByLabel('Filter games').fill('2025');
     await expect(page.locator('[data-game^="2025"]')).toBeVisible();
     await expect(page.locator('[data-game^="2024"]')).toBeHidden();

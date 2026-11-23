@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import games from '../../data/rivalry-games.json';
 import { nextRivalryGame } from '../next-rivalry-game';
+
+const game2026 = games[0];
+const score2026 = `${game2026.wScore}-${game2026.lScore}`;
 import {
   earliestGame,
   gameDay,
@@ -37,10 +40,10 @@ describe('game dates', () => {
 
 describe('anchors', () => {
   it('reads the last Michigan win off the record', () => {
-    expect(lastMichiganWin.game.year).toBe(2024);
-    expect(lastMichiganWin.iso).toBe('2024-11-30T17:00:00Z');
-    expect(lastMichiganWin.kickoff.toISOString()).toBe('2024-11-30T17:00:00.000Z');
-    expect(lastMichiganWin.score).toBe('13-10');
+    expect(lastMichiganWin.game.year).toBe(2026);
+    expect(lastMichiganWin.iso).toBe('2026-11-28T17:00:00Z');
+    expect(lastMichiganWin.kickoff.toISOString()).toBe('2026-11-28T17:00:00.000Z');
+    expect(lastMichiganWin.score).toBe(score2026);
     expect(lastMichiganWin.location).toBe('Columbus');
   });
 
@@ -53,8 +56,8 @@ describe('anchors', () => {
 
   it('finds the newest win whatever order the rows arrive in', () => {
     const rows = [...games].reverse();
-    expect(lastWinBy('Michigan', rows).game.year).toBe(2024);
-    expect(latestGame(rows).year).toBe(2025);
+    expect(lastWinBy('Michigan', rows).game.year).toBe(2026);
+    expect(latestGame(rows).year).toBe(2026);
     expect(earliestGame(rows).year).toBe(1897);
   });
 

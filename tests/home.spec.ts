@@ -1,4 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const games = JSON.parse(readFileSync(new URL('../src/data/rivalry-games.json', import.meta.url), 'utf8')) as Array<{ wScore: number; lScore: number }>;
+
+const game2026 = games[0];
+const score2026 = `${game2026.wScore}-${game2026.lScore}`;
 
 const capturedEvents = (page: any) => page.evaluate(() => JSON.parse(sessionStorage.getItem('analytics-events') ?? '[]'));
 
@@ -56,7 +62,7 @@ test.describe('Count', () => {
     await expect(nav.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     await expect(nav.getByRole('link', { name: 'COUNTDOWN' })).toHaveAttribute('href', '/countdown/');
     await expect(nav.getByRole('link', { name: 'PREVIEW' })).toHaveAttribute('href', '/preview/');
-    await expect(page.locator('[data-live-count]')).toHaveAttribute('data-reference-date', '2024-11-30T17:00:00Z');
+    await expect(page.locator('[data-live-count]')).toHaveAttribute('data-reference-date', '2026-11-28T17:00:00Z');
   });
 
   test('answers both directions of the question', async ({ page }) => {
@@ -75,12 +81,13 @@ test.describe('Count', () => {
   });
 
   test('counts the reverse side from the last Ohio State win', async ({ page }) => {
-    // 8:00 AM Eastern on 2026-08-16. Nov 29 2025 → Aug 16 2026 = 260.
-    await page.clock.install({ time: new Date('2026-08-16T12:00:00Z') });
+    // 7:00 AM Eastern on 2026-12-01. Nov 29 2025 → Dec 1 2026 = 367.
+    await page.clock.install({ time: new Date('2026-12-01T12:00:00Z') });
     await page.goto('/');
 
-    await expect(page.locator('#reverse_days_count')).toHaveText('260');
-    await expect(page.locator('#days_count')).toHaveText('624');
+    await expect(page.locator('#reverse_days_count')).toHaveText('367');
+    // Nov 28 2026 → Dec 1 2026.
+    await expect(page.locator('#days_count')).toHaveText('3');
   });
 
   test('publishes a two-question FAQ with the live counts', async ({ page }) => {
@@ -95,18 +102,18 @@ test.describe('Count', () => {
     ]);
     const days = (await page.locator('#days_count').textContent())!.trim();
     const reverseDays = (await page.locator('#reverse_days_count').textContent())!.trim();
-    expect(faq.mainEntity[0].acceptedAnswer.text).toContain(`${days} days since Michigan last beat Ohio State. Michigan won 13-10 in Columbus on November 30, 2024.`);
+    expect(faq.mainEntity[0].acceptedAnswer.text).toContain(`${days} days since Michigan last beat Ohio State. Michigan won ${score2026} in Columbus on November 28, 2026.`);
     expect(faq.mainEntity[1].acceptedAnswer.text).toContain(`${reverseDays} days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025.`);
     expect(schemas.map((text) => JSON.parse(text)['@type'])).toEqual(['WebSite', 'WebPage', 'FAQPage']);
   });
 
   test('counts Eastern calendar days, not elapsed 24-hour periods', async ({ page }) => {
-    // 8:00 AM Eastern on 2026-08-16 — before 1:00 PM, where the old
-    // elapsed-time math lagged one behind. Nov 30 2024 → Aug 16 2026 = 624.
-    await page.clock.install({ time: new Date('2026-08-16T12:00:00Z') });
+    // 7:00 AM Eastern on 2026-12-01 — before 1:00 PM, where the old
+    // elapsed-time math lagged one behind. Nov 28 2026 → Dec 1 2026 = 3.
+    await page.clock.install({ time: new Date('2026-12-01T12:00:00Z') });
     await page.goto('/');
 
-    await expect(page.locator('#days_count')).toHaveText('624');
+    await expect(page.locator('#days_count')).toHaveText('3');
   });
 
   test('displays a numeric days count and historical totals', async ({ page }) => {
@@ -114,8 +121,8 @@ test.describe('Count', () => {
     const count = page.locator('.counter strong');
     await expect(count).toBeVisible();
     expect(Number((await count.textContent())?.replaceAll(',', ''))).toBeGreaterThanOrEqual(0);
-    await expect(page.getByText('ALL-TIME SERIES (M-OSU-T), 1897-2025')).toBeVisible();
-    await expect(page.getByText('NEXT GAME: November 28, 2026 - Columbus.')).toBeVisible();
+    await expect(page.getByText('ALL-TIME SERIES (M-OSU-T), 1897-2026')).toBeVisible();
+    await expect(page.getByText('NEXT GAME: November 27, 2027 (expected) - Ann Arbor.')).toBeVisible();
   });
 
   test('keeps the Share ribbon aligned to the content and removes image captions', async ({ page }) => {
