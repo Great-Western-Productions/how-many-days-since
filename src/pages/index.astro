@@ -1,7 +1,9 @@
 ---
+import CountStatement from '../components/CountStatement.astro';
 import ShareGraphic from '../components/ShareGraphic.astro';
 import SiteShell from '../components/SiteShell.astro';
 import games from '../data/rivalry-games.json';
+import { countStatement } from '../lib/count-statement';
 import { calcDaysSince } from '../lib/days';
 import { formatCount } from '../lib/share-graphic';
 import { nextGameDateLabel, nextRivalryGame } from '../lib/next-rivalry-game';
@@ -23,8 +25,9 @@ const dayWord = (count: number) => (count === 1 ? 'day' : 'days');
 const title = 'Days Since Michigan Beat Ohio State & Ohio State Beat Michigan';
 const description = `${formatCount(days)} ${dayWord(days)} since Michigan beat Ohio State. ${formatCount(reverseDays)} ${dayWord(reverseDays)} since Ohio State beat Michigan. Last results: Michigan ${lastMichiganWin.score} in ${lastMichiganWin.location} (${lastMichiganWin.longDate}); Ohio State ${lastOhioStateWin.score} in ${lastOhioStateWin.location} (${lastOhioStateWin.longDate}).`;
 // The same two questions the page answers, with the live numbers, so the
-// answer engines have a dated source. Server-rendered per request, so the
-// numbers match the counters on every visit.
+// answer engines have a dated source. Each answer is the statement printed
+// beside its counter: the count, today's date, the last win and the method.
+// Server-rendered per request, so the numbers match the counters on every visit.
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -34,7 +37,7 @@ const faqSchema = {
       name: 'How many days since Michigan beat Ohio State?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `As of ${date}, it has been ${formatCount(days)} ${dayWord(days)} since Michigan last beat Ohio State. Michigan won ${lastMichiganWin.score} in ${lastMichiganWin.location} on ${lastMichiganWin.longDate}.`,
+        text: countStatement(lastMichiganWin, days, date),
       },
     },
     {
@@ -42,7 +45,7 @@ const faqSchema = {
       name: 'How many days since Ohio State beat Michigan?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: `As of ${date}, it has been ${formatCount(reverseDays)} ${dayWord(reverseDays)} since Ohio State last beat Michigan. Ohio State won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}.`,
+        text: countStatement(lastOhioStateWin, reverseDays, date),
       },
     },
   ],
@@ -52,8 +55,8 @@ const hostClass = nextRivalryGame.homeTeam.name.startsWith('Ohio State') ? 'osu'
 ---
 <SiteShell active="count" title={title} description={description} schema={faqSchema}>
   <ShareGraphic slot="nav-share" referenceDate={lastMichiganWin.iso} siteUrl="https://howmanydayssincemichiganhasbeatenohiostate.com" />
-  <section class="count" data-live-count data-reference-date={lastMichiganWin.iso}><h1>HOW MANY DAYS SINCE <span class="mich">MICHIGAN</span> HAS BEATEN <span class="osu">OHIO STATE</span>? <small class="h1-reverse">AND HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</small></h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="days_count">{formatCount(days)}</strong> <span>DAYS</span></p><p class="last">Last <b class="mich">Michigan</b> win: {lastMichiganWin.longDate} - {lastMichiganWin.score}, {lastMichiganWin.location}.<br />Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextGameDateLabel(nextRivalryGame)} - <span class={hostClass}>{nextRivalryGame.location}</span>.</a></p></section>
-  <section class="reverse-count" data-reverse-count data-reference-date={lastOhioStateWin.iso} aria-labelledby="reverse-heading"><h2 id="reverse-heading">DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span></h2><p class="reverse-counter" aria-live="polite"><strong id="reverse_days_count">{formatCount(reverseDays)}</strong> <span>DAYS</span></p><p class="last">Ohio State won {lastOhioStateWin.score} in {lastOhioStateWin.location} on {lastOhioStateWin.longDate}.<br /><a class="reverse-page-link" href="/days-since-ohio-state-beat-michigan/">The Ohio State count on its own page →</a></p></section>
+  <section class="count" data-live-count data-reference-date={lastMichiganWin.iso}><h1>HOW MANY DAYS SINCE <span class="mich">MICHIGAN</span> HAS BEATEN <span class="osu">OHIO STATE</span>? <small class="h1-reverse">AND HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</small></h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="days_count">{formatCount(days)}</strong> <span>DAYS</span></p><CountStatement win={lastMichiganWin} now={now} today={date} /><p class="last">Last <b class="mich">Michigan</b> win: {lastMichiganWin.longDate} - {lastMichiganWin.score}, {lastMichiganWin.location}.<br />Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextGameDateLabel(nextRivalryGame)} - <span class={hostClass}>{nextRivalryGame.location}</span>.</a></p></section>
+  <section class="reverse-count" data-reverse-count data-reference-date={lastOhioStateWin.iso} aria-labelledby="reverse-heading"><h2 id="reverse-heading">DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span></h2><p class="reverse-counter" aria-live="polite"><strong id="reverse_days_count">{formatCount(reverseDays)}</strong> <span>DAYS</span></p><CountStatement win={lastOhioStateWin} now={now} today={date} /><p class="last"><a class="reverse-page-link" href="/days-since-ohio-state-beat-michigan/">The Ohio State count on its own page →</a></p></section>
   <section class="stat-box"><div><strong class={newest.winner === 'Ohio State' ? 'osu' : newest.winner === 'Michigan' ? 'mich' : undefined}>{newest.winner === 'Ohio State' ? 'OSU' : newest.winner === 'Michigan' ? 'MICH' : 'TIE'} {newest.wScore}-{newest.lScore}</strong><small>THE GAME, {newest.year} · {newest.location?.toUpperCase()}</small></div><div><strong>{totals.michigan}-{totals.ohioState}-{totals.ties}</strong><small>ALL-TIME SERIES (M-OSU-T), {oldest.year}-{newest.year}</small></div><div><strong class="osu">{since2012.ohioState}-{since2012.michigan}</strong><small>OHIO STATE SINCE 2012</small></div></section>
   <section class="gwa-ad" aria-labelledby="gwa-ad-heading" data-gwa-ad data-embed-url={gwaFilmEmbedUrl()} data-placement={GWA_PLACEMENT}>
     <div class="gwa-ad-media" data-gwa-media><button type="button" class="gwa-ad-poster" data-gwa-play aria-label="Play the GWA Day 2026 film"><img src={GWA_FILM_STILL} alt="GWA Day 2026 title card" width="1200" height="675" loading="lazy" decoding="async" /><span class="gwa-ad-play-icon" aria-hidden="true"></span></button></div>

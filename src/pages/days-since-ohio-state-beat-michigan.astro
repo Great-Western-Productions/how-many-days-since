@@ -1,8 +1,10 @@
 ---
+import CountStatement from '../components/CountStatement.astro';
 import SiteShell from '../components/SiteShell.astro';
 import games from '../data/rivalry-games.json';
+import { countStatement } from '../lib/count-statement';
 import { calcDaysSince } from '../lib/days';
-import { formatCount } from '../lib/share-graphic';
+import { formatCount, formatDayCount } from '../lib/share-graphic';
 import { nextGameDateLabel, nextRivalryGame } from '../lib/next-rivalry-game';
 import { earliestGame, lastOhioStateWin, latestGame } from '../lib/rivalry-anchors';
 
@@ -18,11 +20,13 @@ const totals = games.reduce((value, game) => ({ michigan: value.michigan + Numbe
 const since2012 = games.filter((game) => game.year >= 2012).reduce((value, game) => ({ michigan: value.michigan + Number(game.winner === 'Michigan'), ohioState: value.ohioState + Number(game.winner === 'Ohio State') }), { michigan: 0, ohioState: 0 });
 const date = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(now);
 const dayWord = (count: number) => (count === 1 ? 'day' : 'days');
-const lastWin = `Ohio State won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}.`;
 
 const title = 'How Many Days Since Ohio State Beat Michigan?';
 const description = `${formatCount(days)} ${dayWord(days)} since Ohio State beat Michigan. OSU last won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}. Next meeting: ${nextGameDateLabel(nextRivalryGame)} in ${nextRivalryGame.location}.`;
-const countAnswer = `As of ${date}, it has been ${formatCount(days)} ${dayWord(days)} since Ohio State last beat Michigan. ${lastWin}`;
+// The statement printed under the counter: the count, today's date, the last win and the method.
+const countAnswer = countStatement(lastOhioStateWin, days, date);
+// The statement sits under the counter, so the OSU phrasing gets the short form.
+const osuAnswer = `${formatDayCount(days)}, as of ${date}. The count starts from Ohio State's ${lastOhioStateWin.score} win in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}.`;
 const lastWinAnswer = `Ohio State last beat Michigan on ${lastOhioStateWin.longDate}, winning ${lastOhioStateWin.score} in ${lastOhioStateWin.location}.`;
 // Server-rendered per request, so the answers match the counter on every visit.
 const faqSchema = {
@@ -38,11 +42,11 @@ const faqSchema = {
 const hostClass = nextRivalryGame.homeTeam.name.startsWith('Ohio State') ? 'osu' : 'mich';
 ---
 <SiteShell title={title} description={description} schema={faqSchema}>
-  <section class="count" data-osu-count data-reference-date={lastOhioStateWin.iso}><h1>HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="osu_days_count">{formatCount(days)}</strong> <span>DAYS</span></p><p class="last">Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextGameDateLabel(nextRivalryGame)} - <span class={hostClass}>{nextRivalryGame.location}</span>.</a></p></section>
+  <section class="count" data-osu-count data-reference-date={lastOhioStateWin.iso}><h1>HOW MANY DAYS SINCE <span class="osu">OHIO STATE</span> BEAT <span class="mich">MICHIGAN</span>?</h1><p class="date" data-current-date>{date}</p><p class="counter" aria-live="polite"><strong id="osu_days_count">{formatCount(days)}</strong> <span>DAYS</span></p><CountStatement win={lastOhioStateWin} now={now} today={date} /><p class="last">Last <b class="osu">Ohio State</b> win: {lastOhioStateWin.longDate} - {lastOhioStateWin.score}, {lastOhioStateWin.location}.<br /><a class="next-game-link" href="/countdown/"><b>NEXT GAME:</b> {nextGameDateLabel(nextRivalryGame)} - <span class={hostClass}>{nextRivalryGame.location}</span>.</a></p></section>
   <section class="stat-box"><div><strong class={newest.winner === 'Ohio State' ? 'osu' : newest.winner === 'Michigan' ? 'mich' : undefined}>{newest.winner === 'Ohio State' ? 'OSU' : newest.winner === 'Michigan' ? 'MICH' : 'TIE'} {newest.wScore}-{newest.lScore}</strong><small>THE GAME, {newest.year} · {newest.location?.toUpperCase()}</small></div><div><strong class="osu">{since2012.ohioState}-{since2012.michigan}</strong><small>OSU VS MICHIGAN SINCE 2012</small></div><div><strong>{totals.ohioState}-{totals.michigan}-{totals.ties}</strong><small>ALL-TIME SERIES (OSU-M-T), {oldest.year}-{newest.year}</small></div></section>
   <section class="osu-faq">
     <h2>How many days since OSU beat Michigan?</h2>
-    <p>{countAnswer}</p>
+    <p>{osuAnswer}</p>
     <h2>When did Ohio State last beat Michigan?</h2>
     <p>{lastWinAnswer}</p>
     <p class="osu-faq-other">Counting the other way? See the <a href="/">days since Michigan beat Ohio State</a>.</p>
