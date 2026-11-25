@@ -111,29 +111,29 @@ test.describe('Count', () => {
   });
 
   test('states each count with today, the last win and the method beside its counter', async ({ page }) => {
-    // 8:00 AM Eastern on 2026-08-16.
-    await page.clock.install({ time: new Date('2026-08-16T12:00:00Z') });
+    // 7:00 AM Eastern on 2026-12-01.
+    await page.clock.install({ time: new Date('2026-12-01T12:00:00Z') });
     await page.goto('/');
 
     const method = "The count is the number of calendar days from the date of that game to today's date in Eastern Time.";
     await expect(page.locator('[data-live-count] [data-count-statement]')).toHaveText(
-      `As of Sunday, August 16, 2026, it has been 624 days since Michigan last beat Ohio State. Michigan won 13-10 in Columbus on November 30, 2024. ${method}`
+      `As of Tuesday, December 1, 2026, it has been 3 days since Michigan last beat Ohio State. Michigan won ${score2026} in Columbus on November 28, 2026. ${method}`
     );
     await expect(page.locator('[data-reverse-count] [data-count-statement]')).toHaveText(
-      `As of Sunday, August 16, 2026, it has been 260 days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025. ${method}`
+      `As of Tuesday, December 1, 2026, it has been 367 days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025. ${method}`
     );
   });
 
   test('moves the statement to the next day at midnight Eastern', async ({ page }) => {
-    // 11:59 PM Eastern on 2026-08-16.
-    await page.clock.install({ time: new Date('2026-08-17T03:59:00Z') });
+    // 11:59 PM Eastern on 2026-12-01.
+    await page.clock.install({ time: new Date('2026-12-02T04:59:00Z') });
     await page.goto('/');
 
     const statement = page.locator('[data-live-count] [data-count-statement]');
-    await expect(statement).toContainText('As of Sunday, August 16, 2026, it has been 624 days');
+    await expect(statement).toContainText('As of Tuesday, December 1, 2026, it has been 3 days');
     await page.clock.runFor('02:00');
-    await expect(statement).toContainText('As of Monday, August 17, 2026, it has been 625 days');
-    await expect(page.locator('#days_count')).toHaveText('625');
+    await expect(statement).toContainText('As of Wednesday, December 2, 2026, it has been 4 days');
+    await expect(page.locator('#days_count')).toHaveText('4');
   });
 
   test('counts Eastern calendar days, not elapsed 24-hour periods', async ({ page }) => {
