@@ -1,0 +1,38 @@
+---
+import { calcDaysSince } from '../lib/days';
+import { countStatement } from '../lib/count-statement';
+import type { WinAnchor } from '../lib/rivalry-anchors';
+
+interface Props {
+  win: WinAnchor;
+  now: Date;
+  /** Today's Eastern date, as the page prints it. */
+  today: string;
+}
+
+const { win, now, today } = Astro.props;
+---
+<p class="count-statement" data-count-statement data-reference-date={win.iso} data-team={win.team} data-score={win.score} data-location={win.location} data-long-date={win.longDate}>{countStatement(win, calcDaysSince(win.kickoff, now), today)}</p>
+
+<script>
+  import { calcDaysSince } from '../lib/days';
+  import { countStatement, type CountFacts } from '../lib/count-statement';
+
+  // The counter above ticks over at midnight Eastern, so the sentence follows it.
+  const statements = document.querySelectorAll<HTMLElement>('[data-count-statement]');
+  const eastern = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  const render = () => {
+    const now = new Date();
+    for (const statement of statements) {
+      const { referenceDate = '', team, score = '', location = '', longDate = '' } = statement.dataset;
+      const win: CountFacts = { team: team as CountFacts['team'], score, location, longDate };
+      statement.textContent = countStatement(win, calcDaysSince(new Date(referenceDate), now), eastern.format(now));
+    }
+  };
+  render();
+  setInterval(render, 60_000);
+</script>
+
+<style>
+  .count-statement { max-width:640px; margin:14px auto 0; color:#3d4148; font-size:15px; line-height:1.55; }
+</style>

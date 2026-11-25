@@ -89,8 +89,8 @@ const scoreOrder = (winner: TeamId | 'tie'): TeamId[] => (winner === 'michigan' 
     </section>
 
     <section aria-labelledby="twins-heading">
-      <div class="section-title sub"><h2 id="twins-heading">THE CLOSEST MEETINGS</h2><span>BY RECORD, SCORING AND SITE ENTERING THE GAME · SINCE {coverage.scores.since}</span></div>
-      <p class="summary" data-testid="twins-summary">{twinSummary(twins)}</p>
+      <div class="section-title sub"><h2 id="twins-heading">CLOSEST MATCHUPS</h2><span>BY RECORD, SCORING AND SITE ENTERING THE GAME · SINCE {coverage.scores.since}</span></div>
+      <p class="summary" data-testid="twins-summary">A matchup is how the two teams came in: each team's record, its points scored and allowed per game, and the site.{twins.length > 0 && <>{' '}{twins.length === 1 ? 'This is the past meeting' : `These are the ${twins.length} past meetings`} nearest this year's on those numbers. {twinSummary(twins)}</>}</p>
       <div class="twins">
         {twins.map((twin) => (
           <a class="twin" href={`/record/${twin.season}/`} data-track-event="record_game_opened" data-track-properties={JSON.stringify({ game_year: twin.season })}>

@@ -88,6 +88,21 @@ test.describe('share badge', () => {
     expect(types).toContain('image/png');
   });
 
+  test('prints the site address in ink under the series panel', async ({ page }) => {
+    // The band under the panel holds the address alone. Muted grey type, the
+    // old treatment, leaves no pixel this dark.
+    const ink = await page.evaluate(() => {
+      const canvas = document.getElementById('share-canvas') as HTMLCanvasElement;
+      const data = canvas.getContext('2d')!.getImageData(0, 566, canvas.width, 44).data;
+      let count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] < 60 && data[i + 1] < 60 && data[i + 2] < 60) count += 1;
+      }
+      return count;
+    });
+    expect(ink).toBeGreaterThan(2000);
+  });
+
   test('links to X with the count and the site URL as separate params', async ({ page }) => {
     const days = await dayCount(page);
     const url = new URL((await page.locator('#share-x').getAttribute('href'))!);

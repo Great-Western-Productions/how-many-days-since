@@ -47,6 +47,11 @@ test('lays out the tape: seven bands, both matchups, an edge and its history', a
 test('links the closest past meetings to their record pages', async ({ page }) => {
   await page.goto('/preview/');
 
+  await expect(page.getByRole('heading', { level: 2, name: 'CLOSEST MATCHUPS' })).toBeVisible();
+  // The section says what it compares before it lists the meetings.
+  await expect(page.getByTestId('twins-summary')).toHaveText(
+    /^A matchup is how the two teams came in: each team's record, its points scored and allowed per game, and the site\. These are the 3 past meetings nearest this year's on those numbers\. \S/
+  );
   const twins = page.locator('.twin');
   await expect(twins).toHaveCount(3);
   const first = twins.first();
