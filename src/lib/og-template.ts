@@ -205,6 +205,8 @@ export function buildCardTemplate(card: OgCard, logoDataUri: string): Node {
       ),
 
       // Footer: the mark and the domain, so a cropped card still says whose it is.
+      // A feed draws the card near 500px wide, so the domain is set in ink at a
+      // size that still reads there. Its 46 characters fill most of the row.
       h(
         'div',
         {
@@ -220,10 +222,11 @@ export function buildCardTemplate(card: OgCard, logoDataUri: string): Node {
             {
               display: 'flex',
               paddingLeft: 18,
-              fontSize: 20,
+              fontSize: 32,
               fontWeight: 700,
-              letterSpacing: '0.04em',
-              color: MUTED,
+              letterSpacing: '0.01em',
+              whiteSpace: 'nowrap',
+              color: INK,
             },
             OG_SITE_DOMAIN
           ),

@@ -328,9 +328,11 @@ const { referenceDate, siteUrl } = Astro.props;
       ctx.fillText('62–52–6', 600, 512);
       ctx.fillStyle = SCARLET;
       ctx.fillText('OSU SINCE 2012', 870, 512);
-      ctx.fillStyle = MUTED;
-      ctx.font = `20px ${BODY_FONT}`;
-      ctx.fillText(siteUrl.replace(/^https?:\/\//, ''), SHARE_WIDTH / 2, 592);
+      // The address is the one thing on the card that brings a viewer back,
+      // so it is set in ink at a size a feed keeps readable.
+      ctx.fillStyle = '#111111';
+      ctx.font = `700 32px ${BODY_FONT}`;
+      ctx.fillText(siteUrl.replace(/^https?:\/\//, ''), SHARE_WIDTH / 2, 598);
 
       xLink.href = buildXIntentUrl(days, siteUrl);
     };

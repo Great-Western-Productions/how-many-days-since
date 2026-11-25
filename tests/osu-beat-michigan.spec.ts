@@ -29,6 +29,10 @@ test.describe('Days since Ohio State beat Michigan', () => {
 
     await expect(page.locator('[data-osu-count]')).toHaveAttribute('data-reference-date', '2026-11-28T17:00:00Z');
     await expect(page.locator('#osu_days_count')).toHaveText('3');
+    // The sentence under the counter carries the count, both dates and the method.
+    await expect(page.locator('[data-osu-count] [data-count-statement]')).toHaveText(
+      `As of Tuesday, December 1, 2026, it has been 3 days since Ohio State last beat Michigan. Ohio State won ${score2026} in Columbus on November 28, 2026. The count is the number of calendar days from the date of that game to today's date in Eastern Time.`
+    );
     await expect(page.getByText(`Last Ohio State win: November 28, 2026 - ${score2026}, Columbus.`)).toBeVisible();
   });
 
@@ -36,6 +40,9 @@ test.describe('Days since Ohio State beat Michigan', () => {
     await page.goto(PATH);
 
     await expect(page.getByRole('heading', { level: 2, name: 'How many days since OSU beat Michigan?' })).toBeVisible();
+    // The statement is printed once, under the counter; the OSU phrasing gets the short form.
+    await expect(page.locator('[data-count-statement]')).toHaveCount(1);
+    await expect(page.locator('.osu-faq')).toContainText(new RegExp(`\\d[\\d,]* days?, as of \\w+, \\w+ \\d+, \\d{4}\\. The count starts from Ohio State's ${score2026} win in Columbus on November 28, 2026\\.`));
     await expect(page.getByRole('link', { name: /days since michigan beat ohio state/i })).toHaveAttribute('href', '/');
     await expect(page.getByRole('link', { name: /next game/i })).toHaveAttribute('href', '/countdown/');
   });
@@ -56,6 +63,10 @@ test.describe('Days since Ohio State beat Michigan', () => {
     const days = (await page.locator('#osu_days_count').textContent())!.trim();
     expect(faq.mainEntity[0].acceptedAnswer.text).toContain(`${days} days since Ohio State last beat Michigan. Ohio State won ${score2026} in Columbus on November 28, 2026.`);
     expect(faq.mainEntity[2].acceptedAnswer.text).toContain('November 28, 2026');
+    // The count answers are the statement printed under the counter, word for word.
+    const statement = (await page.locator('[data-osu-count] [data-count-statement]').textContent())!.trim();
+    expect(faq.mainEntity[0].acceptedAnswer.text).toBe(statement);
+    expect(faq.mainEntity[1].acceptedAnswer.text).toBe(statement);
   });
 });
 
