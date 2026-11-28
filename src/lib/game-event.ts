@@ -65,7 +65,10 @@ export function countdownTitle(game: Game): string {
 
 export function countdownDescription(game: Game): string {
   if (!game.dateAnnounced) {
-    return `Live countdown to Ohio State vs Michigan, expected on ${weekday(game)}, ${game.date}, at ${game.venue.name} in ${game.location}. The Big Ten has not announced the date or kickoff time.`;
+    const expected = `Live countdown to Ohio State vs Michigan, expected on ${weekday(game)}, ${game.date}, at ${game.venue.name} in ${game.location}.`;
+    return /TBA/.test(game.time)
+      ? `${expected} The Big Ten has not announced the date or kickoff time.`
+      : `${expected} Kickoff is ${kickoffInSentence(game)}. The Big Ten has not announced the date.`;
   }
   if (/TBA/.test(game.time)) {
     return `Live countdown to Ohio State vs Michigan on ${weekday(game)}, ${game.date}, at ${game.venue.name} in ${game.location}. Kickoff time has not been announced.`;

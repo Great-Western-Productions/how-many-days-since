@@ -33,10 +33,11 @@ export const nextRivalryGame: RivalryGameSchedule = {
   name: 'Ohio State vs. Michigan',
   // The Big Ten has not set the 2027 date. The Game has closed the regular
   // season on the Saturday after Thanksgiving, so that is the expected day.
+  // It kicks off at noon Eastern every year, so the time is set.
   start: '2027-11-27T12:00:00-05:00',
   end: '2027-11-27T15:30:00-05:00',
   date: 'November 27, 2027',
-  time: 'Time TBA',
+  time: 'Noon ET',
   location: 'Ann Arbor',
   timeZone: 'America/New_York',
   dateAnnounced: false,

@@ -9,7 +9,7 @@ describe('nextRivalryGame', () => {
       location: 'Ann Arbor',
       timeZone: 'America/New_York',
       start: '2027-11-27T12:00:00-05:00',
-      time: 'Time TBA',
+      time: 'Noon ET',
       dateAnnounced: false,
     });
     expect(nextRivalryGame.venue.name).toBe('Michigan Stadium');
