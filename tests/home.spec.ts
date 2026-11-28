@@ -36,7 +36,7 @@ test.describe('Count', () => {
       'https://gwpworkshop.com/collections/rivalry-lab'
     );
     await expect(
-      page.getByRole('link', { name: /shop last year's tee/i })
+      page.getByRole('link', { name: /shop the 2025 tee/i })
     ).toHaveAttribute(
       'href',
       'https://gwpworkshop.com/products/script-in-the-snow-the-2025-rivalry-game-commemorative-tee'
@@ -45,7 +45,7 @@ test.describe('Count', () => {
 
   test('tracks the featured product and its placement', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /shop last year's tee/i }).click();
+    await page.getByRole('link', { name: /shop the 2025 tee/i }).click();
 
     await expect.poll(() => capturedEvents(page)).toContainEqual(['event', 'merch_product_opened', {
       product: 'script-in-the-snow',

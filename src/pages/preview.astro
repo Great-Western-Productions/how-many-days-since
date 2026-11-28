@@ -1,5 +1,6 @@
 ---
 import SiteShell from '../components/SiteShell.astro';
+import { resultFor } from '../lib/latest-result';
 import {
   TEAM_IDS,
   TEAM_NAMES,
@@ -28,6 +29,8 @@ import {
 const { tape, teams, twins, commonOpponents, coverage } = preview;
 const home = preview.game.homeTeamId;
 const kickoff = `${kickoffDate(preview)} · ${kickoffTime(preview)} · ${cityFor(home)}`.toUpperCase();
+// Once the game is in the record, the preview says how it ended.
+const final = resultFor(preview.game.season);
 const through = preview.dataThrough ? monthDay(preview.dataThrough) : null;
 const held = edgesHeld(tape);
 const leader: TeamId | null = held['ohio-state'] === held.michigan ? null : held['ohio-state'] > held.michigan ? 'ohio-state' : 'michigan';
@@ -40,6 +43,7 @@ const scoreOrder = (winner: TeamId | 'tie'): TeamId[] => (winner === 'michigan' 
 <SiteShell active="preview" title={previewTitle(preview)} description={previewDescription(preview)}>
   <section class="preview">
     <div class="section-title"><h1>THE PREVIEW</h1><span>{kickoff}</span></div>
+    {final && <p class="final-line" data-testid="preview-final"><b class={final.team}>FINAL: {final.headline}.</b> This preview was written before the game. <a href={`/record/${final.year}/`}>The {final.year} game →</a></p>}
 
     <section class="teams" aria-label="Records entering the game">
       {TEAM_IDS.map((teamId) => (
@@ -140,6 +144,8 @@ const scoreOrder = (winner: TeamId | 'tie'): TeamId[] => (winner === 'michigan' 
   .preview h1 { margin:0; font:48px 'Archivo Black'; letter-spacing:-.02em; }
   .preview h2 { margin:0; font:24px 'Archivo Black'; letter-spacing:-.02em; }
   .section-title.sub { margin-top:48px; }
+  .final-line { margin:16px 0 0; padding:12px 14px; border:3px solid #111; font-size:15px; line-height:1.5; }
+  .final-line a { color:#111; font-weight:700; white-space:nowrap; }
   .summary { max-width:720px; margin:10px 0 0; color:#3d4148; font-size:16px; line-height:1.55; }
 
   .teams { display:grid; grid-template-columns:1fr 1fr; margin-top:24px; border:3px solid #111; }
