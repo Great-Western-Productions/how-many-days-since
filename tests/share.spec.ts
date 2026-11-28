@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 /**
  * The card is white with scarlet and black type, so anything off-white means
@@ -101,6 +102,32 @@ test.describe('share badge', () => {
       return count;
     });
     expect(ink).toBeGreaterThan(2000);
+  });
+
+  test('prints the latest score and the series from the record', async ({ page }) => {
+    const games = JSON.parse(readFileSync(new URL('../src/data/rivalry-games.json', import.meta.url), 'utf8')) as Array<{ winner: string; wScore: number; lScore: number }>;
+    const [latest] = games;
+    const wins = (team: string) => games.filter((game) => game.winner === team).length;
+    const badge = page.locator('#share-badge');
+
+    await expect(badge).toHaveAttribute('data-latest', `${latest.winner.toUpperCase()} ${latest.wScore}–${latest.lScore}`);
+    await expect(badge).toHaveAttribute('data-series', `${wins('Michigan')}–${wins('Ohio State')}–${wins('Tie')}`);
+    // The panel is drawn from those attributes: its row holds scarlet or blue
+    // type for the winner and ink for the series.
+    const painted = await page.evaluate(() => {
+      const canvas = document.getElementById('share-canvas') as HTMLCanvasElement;
+      const data = canvas.getContext('2d')!.getImageData(160, 480, 560, 44).data;
+      let team = 0;
+      let ink = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+        if (r < 60 && g < 60 && b < 60) ink += 1;
+        else if ((r > 150 && g < 60 && b < 60) || (r < 40 && g < 70 && b > 50 && b < 110)) team += 1;
+      }
+      return { team, ink };
+    });
+    expect(painted.team).toBeGreaterThan(500);
+    expect(painted.ink).toBeGreaterThan(300);
   });
 
   test('links to X with the count and the site URL as separate params', async ({ page }) => {
