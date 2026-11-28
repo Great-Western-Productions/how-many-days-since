@@ -36,19 +36,29 @@ test.describe('Count', () => {
       'https://gwpworkshop.com/collections/rivalry-lab'
     );
     await expect(
-      page.getByRole('link', { name: /shop last year's tee/i })
+      page.getByRole('link', { name: /shop this year's tee/i })
     ).toHaveAttribute(
       'href',
-      'https://gwpworkshop.com/products/script-in-the-snow-the-2025-rivalry-game-commemorative-tee'
+      'https://gwpworkshop.com/products/important-game-t-shirt'
     );
+  });
+
+  test('features the 2026 tee with the final score of the game it marks', async ({ page }) => {
+    await page.goto('/');
+    const card = page.locator('.featured-merch');
+
+    await expect(card.getByRole('heading', { level: 2 })).toHaveText('IMPORTANT GAME T-SHIRT');
+    await expect(card).toContainText("FROM THIS YEAR'S GAME: OHIO STATE 45-0 IN COLUMBUS.");
+    await expect(card.locator('img')).toHaveAttribute('src', '/images/products/important-game-t-shirt.jpg');
+    expect((await page.request.get('/images/products/important-game-t-shirt.jpg')).ok()).toBe(true);
   });
 
   test('tracks the featured product and its placement', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: /shop last year's tee/i }).click();
+    await page.getByRole('link', { name: /shop this year's tee/i }).click();
 
     await expect.poll(() => capturedEvents(page)).toContainEqual(['event', 'merch_product_opened', {
-      product: 'script-in-the-snow',
+      product: 'important-game-t-shirt',
       placement: 'home_featured',
     }]);
   });
