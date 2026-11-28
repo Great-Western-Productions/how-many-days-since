@@ -5,11 +5,10 @@
  * and the preview's final line change when a game is added to the record.
  */
 import games from '../data/rivalry-games.json';
-import { calcDaysSince } from './days';
+import { resultIsFresh } from './result-freshness';
 import { gameKickoffIso, gameLongDate, latestGame, type RivalryGameRow } from './rivalry-anchors';
 
-/** How many days after a game its result leads every page. */
-export const RESULT_FRESH_DAYS = 7;
+export { RESULT_FRESH_DAYS, resultIsFresh } from './result-freshness';
 
 export interface GameResult {
   year: number;
@@ -25,6 +24,8 @@ export interface GameResult {
   headline: string;
   /** The winner's color class, or none for a tie. */
   team: 'osu' | 'mich' | undefined;
+  /** Noon Eastern on game day, the instant freshness is counted from. */
+  kickoffIso: string;
 }
 
 export function gameResult(game: RivalryGameRow): GameResult {
@@ -39,15 +40,14 @@ export function gameResult(game: RivalryGameRow): GameResult {
     location: game.location ?? 'Site not reported',
     headline: tie ? `THE GAME ENDS IN A TIE, ${score}` : `${game.winner.toUpperCase()} WINS THE GAME, ${score}`,
     team: game.winner === 'Ohio State' ? 'osu' : game.winner === 'Michigan' ? 'mich' : undefined,
+    kickoffIso: gameKickoffIso(game),
   };
 }
 
 /** The latest game, while it is at most `RESULT_FRESH_DAYS` Eastern calendar days old. */
 export function freshResult(now: Date, rows: readonly RivalryGameRow[] = games): GameResult | null {
   const game = latestGame(rows);
-  const kickoff = new Date(gameKickoffIso(game));
-  if (kickoff.getTime() > now.getTime()) return null;
-  return calcDaysSince(kickoff, now) <= RESULT_FRESH_DAYS ? gameResult(game) : null;
+  return resultIsFresh(new Date(gameKickoffIso(game)), now) ? gameResult(game) : null;
 }
 
 /** The result of the game played in `year`, if the record holds one. */

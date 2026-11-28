@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import games from '../../data/rivalry-games.json';
-import { RESULT_FRESH_DAYS, freshResult, gameResult, resultFor, seriesRecord, shareGraphicPanel } from '../latest-result';
+import { RESULT_FRESH_DAYS, freshResult, gameResult, resultFor, resultIsFresh, seriesRecord, shareGraphicPanel } from '../latest-result';
 
 const OSU_2026 = { id: 122, year: 2026, date: 'Nov 28', winner: 'Ohio State', loser: 'Michigan', wScore: 45, lScore: 0, location: 'Columbus', wRank: 25, lRank: null };
 const MICH_2024 = { id: 120, year: 2024, date: 'Nov 30', winner: 'Michigan', loser: 'Ohio State', wScore: 13, lScore: 10, location: 'Columbus', wRank: null, lRank: 2 };
@@ -37,6 +37,17 @@ describe('freshResult', () => {
   it('steps aside the day after the window and before the game is played', () => {
     expect(at('2026-12-06T00:00:00-05:00')).toBeNull();
     expect(at('2026-11-28T09:00:00-05:00')).toBeNull();
+  });
+});
+
+describe('resultIsFresh', () => {
+  const kickoff = new Date(gameResult(OSU_2026 as (typeof games)[number]).kickoffIso);
+
+  it('answers for a page that was built during the window and opened after it', () => {
+    expect(kickoff.toISOString()).toBe('2026-11-28T17:00:00.000Z');
+    expect(resultIsFresh(kickoff, new Date('2026-12-05T12:00:00-05:00'))).toBe(true);
+    expect(resultIsFresh(kickoff, new Date('2026-12-06T08:00:00-05:00'))).toBe(false);
+    expect(resultIsFresh(kickoff, new Date('2026-11-28T09:00:00-05:00'))).toBe(false);
   });
 });
 

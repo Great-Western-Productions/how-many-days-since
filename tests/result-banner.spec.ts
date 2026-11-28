@@ -34,6 +34,24 @@ for (const path of ['/', '/countdown/', '/days-since-ohio-state-beat-michigan/',
   });
 }
 
+// The archive pages are prerendered, so a banner built during the window is
+// still in their HTML afterwards and the page takes it down on load.
+for (const path of [`/record/${latest.year}/`, '/']) {
+  test(`takes the banner down in the browser on ${path} once the window has passed`, async ({ page }) => {
+    test.skip(!fresh, 'the server no longer renders the banner');
+    await page.clock.install({ time: new Date(gameDay + 9 * 86_400_000) });
+    await page.goto(path);
+    await expect(page.locator('[data-result-banner]')).toBeHidden();
+    await expect(page.locator('[data-result-banner]')).toHaveCount(1);
+  });
+}
+
+test('keeps the banner on a prerendered archive page while the result is fresh', async ({ page }) => {
+  test.skip(!fresh, 'the server no longer renders the banner');
+  await page.goto(`/record/${latest.year}/`);
+  await expect(page.locator('[data-result-banner]')).toBeVisible();
+});
+
 test('keeps the banner inside a phone screen', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/');
