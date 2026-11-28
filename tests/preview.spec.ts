@@ -18,6 +18,14 @@ test('publishes the game preview with its own title, description and canonical',
   await expect(page.getByRole('navigation', { name: 'Site' }).getByRole('link', { name: 'PREVIEW' })).toHaveAttribute('aria-current', 'page');
 });
 
+test('says how the game ended once the record holds it', async ({ page }) => {
+  await page.goto('/preview/');
+  const final = page.getByTestId('preview-final');
+  await expect(final).toContainText('FINAL: OHIO STATE WINS THE GAME, 45-0.');
+  await expect(final).toContainText('This preview was written before the game.');
+  await expect(final.getByRole('link')).toHaveAttribute('href', '/record/2026/');
+});
+
 test('shows both records entering the game', async ({ page }) => {
   await page.goto('/preview/');
 

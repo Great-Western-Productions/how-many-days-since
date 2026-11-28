@@ -1,4 +1,5 @@
 ---
+import ResultBanner from './ResultBanner.astro';
 import '../styles/site.css';
 import '../styles/norwester.css';
 import {
@@ -71,6 +72,7 @@ const nav = [{ href: '/', label: 'Home', id: 'count', icon: true }, { href: '/co
   </head>
   <body>
     <header class="site-header"><nav class="site-nav" id="site-nav" aria-label="Site">{nav.map((item) => <a href={item.href} aria-label={item.icon ? item.label : undefined} target={item.id === 'merch' ? '_blank' : undefined} rel={item.id === 'merch' ? 'noopener noreferrer' : undefined} aria-current={active === item.id ? 'page' : undefined} class:list={{ active: active === item.id, 'site-nav-home': item.icon }}>{item.icon ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z" /></svg> : item.label}</a>)}<div class="site-nav-share"><slot name="nav-share" /></div><button type="button" class="site-nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><span aria-hidden="true"></span></button></nav></header>
+    <ResultBanner />
     <main class:list={{ 'site-main': true, lab: active === 'lab' }}><slot /></main>
     {active !== 'lab' && <footer class="site-footer">an <a href="https://github.com/jschairb">@jschairb</a> joint, from <a class="gwp" href="https://greatwesternproductions.com">Great Western Productions</a> · © {new Date().getFullYear()}</footer>}
   </body>

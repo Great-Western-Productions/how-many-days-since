@@ -1,4 +1,5 @@
 ---
+import { shareGraphicPanel } from '../lib/latest-result';
 import { SHARE_WIDTH, SHARE_HEIGHT } from '../lib/share-graphic';
 
 interface Props {
@@ -7,9 +8,12 @@ interface Props {
 }
 
 const { referenceDate, siteUrl } = Astro.props;
+// The latest score and the series total come from the record, so the card
+// follows the result the day a game is added.
+const panel = shareGraphicPanel();
 ---
 
-<div id="share-badge" data-reference-date={referenceDate} data-site-url={siteUrl}>
+<div id="share-badge" data-reference-date={referenceDate} data-site-url={siteUrl} data-latest={panel.latest} data-latest-team={panel.latestTeam} data-series={panel.series}>
   <div id="share-clip">
     <button
       type="button"
@@ -225,6 +229,7 @@ const { referenceDate, siteUrl } = Astro.props;
 
   // Straight off the site's stylesheet, so the card reads as the page.
   const SCARLET = '#BB0000';
+  const BLUE = '#00274C';
   const MUTED = '#6B717C';
   const HEADING_FONT = 'Archivo Black, Arial Black, Arial, sans-serif';
   const BODY_FONT = 'IBM Plex Sans, Arial, Helvetica, sans-serif';
@@ -235,6 +240,9 @@ const { referenceDate, siteUrl } = Astro.props;
   if (badge && canvas) {
     const referenceDate = new Date(badge.dataset.referenceDate ?? '');
     const siteUrl = badge.dataset.siteUrl ?? window.location.origin;
+    const latest = badge.dataset.latest ?? '';
+    const latestColor = badge.dataset.latestTeam === 'mich' ? BLUE : badge.dataset.latestTeam === 'osu' ? SCARLET : '#111111';
+    const series = badge.dataset.series ?? '';
 
     const trigger = document.getElementById('share-trigger') as HTMLButtonElement;
     const menu = document.getElementById('share-menu') as HTMLDivElement;
@@ -321,11 +329,11 @@ const { referenceDate, siteUrl } = Astro.props;
       ctx.strokeStyle = '#111111';
       ctx.lineWidth = 3;
       ctx.strokeRect(150, 452, 900, 98);
-      ctx.fillStyle = SCARLET;
+      ctx.fillStyle = latestColor;
       ctx.font = `32px ${HEADING_FONT}`;
-      ctx.fillText('OHIO STATE 27–9', 330, 512);
+      ctx.fillText(latest, 330, 512);
       ctx.fillStyle = '#111111';
-      ctx.fillText('62–52–6', 600, 512);
+      ctx.fillText(series, 600, 512);
       ctx.fillStyle = SCARLET;
       ctx.fillText('OSU SINCE 2012', 870, 512);
       // The address is the one thing on the card that brings a viewer back,
