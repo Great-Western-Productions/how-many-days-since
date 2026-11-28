@@ -1,4 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const games = JSON.parse(readFileSync(new URL('../src/data/rivalry-games.json', import.meta.url), 'utf8')) as Array<{ wScore: number; lScore: number }>;
+
+const game2026 = games[0];
+const score2026 = `${game2026.wScore}-${game2026.lScore}`;
 
 const PATH = '/days-since-ohio-state-beat-michigan/';
 
@@ -12,22 +18,22 @@ test.describe('Days since Ohio State beat Michigan', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('HOW MANY DAYS SINCE OHIO STATE BEAT MICHIGAN?');
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       'content',
-      /^\d[\d,]* days? since Ohio State beat Michigan\. OSU last won 27-9 in Ann Arbor on November 29, 2025\./
+      new RegExp(`^\\d[\\d,]* days? since Ohio State beat Michigan\\. OSU last won ${score2026} in Columbus on November 28, 2026\\.`)
     );
   });
 
   test('counts Eastern calendar days from the last Ohio State win', async ({ page }) => {
-    // 8:00 AM Eastern on 2026-08-16. Nov 29 2025 → Aug 16 2026 = 260.
-    await page.clock.install({ time: new Date('2026-08-16T12:00:00Z') });
+    // 7:00 AM Eastern on 2026-12-01. Nov 28 2026 → Dec 1 2026 = 3.
+    await page.clock.install({ time: new Date('2026-12-01T12:00:00Z') });
     await page.goto(PATH);
 
-    await expect(page.locator('[data-osu-count]')).toHaveAttribute('data-reference-date', '2025-11-29T17:00:00Z');
-    await expect(page.locator('#osu_days_count')).toHaveText('260');
+    await expect(page.locator('[data-osu-count]')).toHaveAttribute('data-reference-date', '2026-11-28T17:00:00Z');
+    await expect(page.locator('#osu_days_count')).toHaveText('3');
     // The sentence under the counter carries the count, both dates and the method.
     await expect(page.locator('[data-osu-count] [data-count-statement]')).toHaveText(
-      "As of Sunday, August 16, 2026, it has been 260 days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025. The count is the number of calendar days from the date of that game to today's date in Eastern Time."
+      `As of Tuesday, December 1, 2026, it has been 3 days since Ohio State last beat Michigan. Ohio State won ${score2026} in Columbus on November 28, 2026. The count is the number of calendar days from the date of that game to today's date in Eastern Time.`
     );
-    await expect(page.getByText('Last Ohio State win: November 29, 2025 - 27-9, Ann Arbor.')).toBeVisible();
+    await expect(page.getByText(`Last Ohio State win: November 28, 2026 - ${score2026}, Columbus.`)).toBeVisible();
   });
 
   test('answers the OSU phrasing and links back to the Michigan count', async ({ page }) => {
@@ -36,7 +42,7 @@ test.describe('Days since Ohio State beat Michigan', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'How many days since OSU beat Michigan?' })).toBeVisible();
     // The statement is printed once, under the counter; the OSU phrasing gets the short form.
     await expect(page.locator('[data-count-statement]')).toHaveCount(1);
-    await expect(page.locator('.osu-faq')).toContainText(/\d[\d,]* days?, as of \w+, \w+ \d+, \d{4}\. The count starts from Ohio State's 27-9 win in Ann Arbor on November 29, 2025\./);
+    await expect(page.locator('.osu-faq')).toContainText(new RegExp(`\\d[\\d,]* days?, as of \\w+, \\w+ \\d+, \\d{4}\\. The count starts from Ohio State's ${score2026} win in Columbus on November 28, 2026\\.`));
     await expect(page.getByRole('link', { name: /days since michigan beat ohio state/i })).toHaveAttribute('href', '/');
     await expect(page.getByRole('link', { name: /next game/i })).toHaveAttribute('href', '/countdown/');
   });
@@ -55,8 +61,8 @@ test.describe('Days since Ohio State beat Michigan', () => {
       'When did Ohio State last beat Michigan?',
     ]);
     const days = (await page.locator('#osu_days_count').textContent())!.trim();
-    expect(faq.mainEntity[0].acceptedAnswer.text).toContain(`${days} days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025.`);
-    expect(faq.mainEntity[2].acceptedAnswer.text).toContain('November 29, 2025');
+    expect(faq.mainEntity[0].acceptedAnswer.text).toContain(`${days} days since Ohio State last beat Michigan. Ohio State won ${score2026} in Columbus on November 28, 2026.`);
+    expect(faq.mainEntity[2].acceptedAnswer.text).toContain('November 28, 2026');
     // The count answers are the statement printed under the counter, word for word.
     const statement = (await page.locator('[data-osu-count] [data-count-statement]').textContent())!.trim();
     expect(faq.mainEntity[0].acceptedAnswer.text).toBe(statement);

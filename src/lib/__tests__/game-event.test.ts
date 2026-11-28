@@ -140,6 +140,12 @@ describe('a next game whose date is not announced', () => {
     );
   });
 
+  it('states the kickoff when the time is set ahead of the date', () => {
+    expect(countdownDescription({ ...UNANNOUNCED, time: 'Noon ET' })).toBe(
+      'Live countdown to Ohio State vs Michigan, expected on Saturday, November 27, 2027, at Michigan Stadium in Ann Arbor. Kickoff is noon ET. The Big Ten has not announced the date.'
+    );
+  });
+
   it('publishes no event markup', () => {
     expect(gameEventSchema(UNANNOUNCED, { image: IMAGE, url: PAGE })).toBeNull();
   });

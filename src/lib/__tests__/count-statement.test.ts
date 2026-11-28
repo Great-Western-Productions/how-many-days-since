@@ -15,7 +15,7 @@ describe('countStatement', () => {
 
   it('names the other side when Ohio State holds the last win', () => {
     expect(countStatement(lastOhioStateWin, 360, TODAY)).toContain(
-      'it has been 360 days since Ohio State last beat Michigan. Ohio State won 27-9 in Ann Arbor on November 29, 2025.'
+      `it has been 360 days since Ohio State last beat Michigan. Ohio State won ${lastOhioStateWin.score} in ${lastOhioStateWin.location} on ${lastOhioStateWin.longDate}.`
     );
   });
 

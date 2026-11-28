@@ -30,24 +30,25 @@ export interface RivalryGameSchedule {
 }
 
 export const nextRivalryGame: RivalryGameSchedule = {
-  name: 'Michigan vs. Ohio State',
-  start: '2026-11-28T12:00:00-05:00',
-  // No listing publishes a final whistle. Three and a half hours covers a
-  // televised noon game, and search engines ask for an end on every event.
-  end: '2026-11-28T15:30:00-05:00',
-  date: 'November 28, 2026',
+  name: 'Ohio State vs. Michigan',
+  // The Big Ten has not set the 2027 date. The Game has closed the regular
+  // season on the Saturday after Thanksgiving, so that is the expected day.
+  // It kicks off at noon Eastern every year, so the time is set.
+  start: '2027-11-27T12:00:00-05:00',
+  end: '2027-11-27T15:30:00-05:00',
+  date: 'November 27, 2027',
   time: 'Noon ET',
-  location: 'Columbus',
+  location: 'Ann Arbor',
   timeZone: 'America/New_York',
-  dateAnnounced: true,
+  dateAnnounced: false,
   venue: {
-    name: 'Ohio Stadium',
-    streetAddress: '411 Woody Hayes Drive',
-    region: 'OH',
-    postalCode: '43210',
+    name: 'Michigan Stadium',
+    streetAddress: '1201 S Main St',
+    region: 'MI',
+    postalCode: '48104',
   },
-  homeTeam: { name: 'Ohio State Buckeyes', url: 'https://ohiostatebuckeyes.com' },
-  awayTeam: { name: 'Michigan Wolverines' },
+  homeTeam: { name: 'Michigan Wolverines', url: 'https://mgoblue.com' },
+  awayTeam: { name: 'Ohio State Buckeyes' },
 };
 
 /** "November 28, 2026", or "November 27, 2027 (expected)" before the date is set. */
