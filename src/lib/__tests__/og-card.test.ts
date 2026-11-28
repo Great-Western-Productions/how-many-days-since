@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import games from '../../data/rivalry-games.json';
 import {
   DEFAULT_OG_IMAGE_PATH,
   OG_CACHE_SECONDS,
@@ -11,13 +12,18 @@ import {
 } from '../og-card';
 
 const NOW = new Date('2026-08-17T16:00:00Z');
+/** Three days after the 2026 meeting, which the record now holds. */
+const AFTER_2026 = new Date('2026-12-01T16:00:00Z');
+const game2026 = games[0];
+const score2026 = `${game2026.wScore}-${game2026.lScore}`;
 
 describe('resolveOgCard', () => {
   it('counts the days since the last Michigan win on the home card', () => {
-    const card = resolveOgCard('/', NOW);
+    const card = resolveOgCard('/', AFTER_2026);
 
-    expect(card?.metric).toEqual({ value: '625', unit: 'DAYS' });
-    expect(card?.detail).toContain('Ohio State 27, Michigan 9');
+    // Nov 28 2026 → Dec 1 2026, Eastern calendar days.
+    expect(card?.metric).toEqual({ value: '3', unit: 'DAYS' });
+    expect(card?.detail).toContain(`Michigan ${game2026.wScore}, Ohio State ${game2026.lScore}`);
     // The streak is Ohio State's, so the card wears scarlet.
     expect(card?.team).toBe('ohio-state');
   });
@@ -25,19 +31,20 @@ describe('resolveOgCard', () => {
   it('counts down to kickoff on the countdown card', () => {
     const card = resolveOgCard('/countdown', NOW);
 
-    expect(card?.metric).toEqual({ value: '103', unit: 'DAYS' });
-    expect(card?.detail).toContain('November 28, 2026');
+    // Aug 17 2026 → the expected Nov 27 2027.
+    expect(card?.metric).toEqual({ value: '467', unit: 'DAYS' });
+    expect(card?.detail).toContain('November 27, 2027 (expected)');
     expect(card?.team).toBe('rivalry');
   });
 
   it('follows the countdown page through game day', () => {
     const at = (iso: string) => resolveOgCard('/countdown', new Date(iso));
 
-    expect(at('2026-11-28T08:00:00-05:00')?.headline).toBe('GAME DAY');
-    expect(at('2026-11-28T08:00:00-05:00')?.metric).toBeUndefined();
-    expect(at('2026-11-28T13:00:00-05:00')?.headline).toBe('IN PROGRESS');
-    expect(at('2026-11-28T13:00:00-05:00')?.detail).toBe('Kickoff noon ET · Ohio Stadium');
-    expect(at('2026-11-28T17:00:00-05:00')?.headline).toBe('FINAL');
+    expect(at('2027-11-27T08:00:00-05:00')?.headline).toBe('GAME DAY');
+    expect(at('2027-11-27T08:00:00-05:00')?.metric).toBeUndefined();
+    expect(at('2027-11-27T13:00:00-05:00')?.headline).toBe('IN PROGRESS');
+    expect(at('2027-11-27T13:00:00-05:00')?.detail).toBe('Kickoff noon ET · Michigan Stadium');
+    expect(at('2027-11-27T17:00:00-05:00')?.headline).toBe('FINAL');
   });
 
   it('carries both records and the kickoff on the preview card', () => {
@@ -62,8 +69,8 @@ describe('resolveOgCard', () => {
     const card = resolveOgCard('/record', NOW);
 
     expect(card?.headline).toBe('THE RECORD');
-    expect(card?.eyebrow).toBe('EVERY MEETING · 1897-2025');
-    expect(card?.detail).toContain('All 121 Ohio State-Michigan meetings');
+    expect(card?.eyebrow).toBe('EVERY MEETING · 1897-2026');
+    expect(card?.detail).toContain('All 122 Ohio State-Michigan meetings');
   });
 
   it('colors each team in a rivalry meeting score', () => {
@@ -190,20 +197,20 @@ describe('ogCacheSeconds', () => {
 
   it('expires the countdown card at the next phase change', () => {
     // Weeks out, a day is the cap.
-    expect(at('2026-11-01T12:00:00-05:00')).toBe(OG_CACHE_SECONDS);
+    expect(at('2027-11-01T12:00:00-05:00')).toBe(OG_CACHE_SECONDS);
     // Two hours before game day starts at midnight Eastern.
-    expect(at('2026-11-27T22:00:00-05:00')).toBe(2 * 60 * 60);
+    expect(at('2027-11-26T22:00:00-05:00')).toBe(2 * 60 * 60);
     // Game day, an hour before kickoff.
-    expect(at('2026-11-28T11:00:00-05:00')).toBe(60 * 60);
+    expect(at('2027-11-27T11:00:00-05:00')).toBe(60 * 60);
     // In progress, an hour before it turns final.
-    expect(at('2026-11-28T15:00:00-05:00')).toBe(60 * 60);
+    expect(at('2027-11-27T15:00:00-05:00')).toBe(60 * 60);
   });
 
   it('holds a fetch just before a change for a minute', () => {
-    expect(at('2026-11-28T11:59:50-05:00')).toBe(60);
+    expect(at('2027-11-27T11:59:50-05:00')).toBe(60);
   });
 
   it('holds the final card ten minutes, until a deploy moves the next game', () => {
-    expect(at('2026-11-28T17:00:00-05:00')).toBe(600);
+    expect(at('2027-11-27T17:00:00-05:00')).toBe(600);
   });
 });

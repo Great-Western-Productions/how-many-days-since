@@ -8,7 +8,7 @@ describe('countStatement', () => {
   it('states the count, today, the last win and the method in one passage', () => {
     expect(countStatement(lastMichiganWin, 724, TODAY)).toBe(
       'As of Tuesday, November 24, 2026, it has been 724 days since Michigan last beat Ohio State. ' +
-        'Michigan won 13-10 in Columbus on November 30, 2024. ' +
+        `Michigan won ${lastMichiganWin.score} in ${lastMichiganWin.location} on ${lastMichiganWin.longDate}. ` +
         "The count is the number of calendar days from the date of that game to today's date in Eastern Time."
     );
   });
@@ -29,7 +29,8 @@ describe('countStatement', () => {
   });
 
   it('needs the four facts a page hands its script, and no more', () => {
-    const facts = { team: 'Michigan' as const, score: '13-10', location: 'Columbus', longDate: 'November 30, 2024' };
+    const { score, location, longDate } = lastMichiganWin;
+    const facts = { team: 'Michigan' as const, score, location, longDate };
     expect(countStatement(facts, 724, TODAY)).toBe(countStatement(lastMichiganWin, 724, TODAY));
   });
 });
