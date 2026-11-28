@@ -39,7 +39,7 @@ test.describe('Count', () => {
       page.getByRole('link', { name: /shop this year's tee/i })
     ).toHaveAttribute(
       'href',
-      'https://gwpworkshop.com/products/important-game-t-shirt'
+      'https://gwpworkshop.com/products/state-of-ohio-t-shirt'
     );
   });
 
@@ -47,10 +47,10 @@ test.describe('Count', () => {
     await page.goto('/');
     const card = page.locator('.featured-merch');
 
-    await expect(card.getByRole('heading', { level: 2 })).toHaveText('IMPORTANT GAME T-SHIRT');
+    await expect(card.getByRole('heading', { level: 2 })).toHaveText('STATE OF OHIO T-SHIRT');
     await expect(card).toContainText("FROM THIS YEAR'S GAME: OHIO STATE 45-0 IN COLUMBUS.");
-    await expect(card.locator('img')).toHaveAttribute('src', '/images/products/important-game-t-shirt.jpg');
-    expect((await page.request.get('/images/products/important-game-t-shirt.jpg')).ok()).toBe(true);
+    await expect(card.locator('img')).toHaveAttribute('src', '/images/products/state-of-ohio-t-shirt.jpg');
+    expect((await page.request.get('/images/products/state-of-ohio-t-shirt.jpg')).ok()).toBe(true);
   });
 
   test('tracks the featured product and its placement', async ({ page }) => {
@@ -58,7 +58,7 @@ test.describe('Count', () => {
     await page.getByRole('link', { name: /shop this year's tee/i }).click();
 
     await expect.poll(() => capturedEvents(page)).toContainEqual(['event', 'merch_product_opened', {
-      product: 'important-game-t-shirt',
+      product: 'state-of-ohio-t-shirt',
       placement: 'home_featured',
     }]);
   });
