@@ -43,8 +43,7 @@ describe('resolveOgCard', () => {
     expect(at('2027-11-27T08:00:00-05:00')?.headline).toBe('GAME DAY');
     expect(at('2027-11-27T08:00:00-05:00')?.metric).toBeUndefined();
     expect(at('2027-11-27T13:00:00-05:00')?.headline).toBe('IN PROGRESS');
-    // The 2027 kickoff time is not set, so the card names the stadium alone.
-    expect(at('2027-11-27T13:00:00-05:00')?.detail).toBe('Michigan Stadium');
+    expect(at('2027-11-27T13:00:00-05:00')?.detail).toBe('Kickoff noon ET · Michigan Stadium');
     expect(at('2027-11-27T17:00:00-05:00')?.headline).toBe('FINAL');
   });
 

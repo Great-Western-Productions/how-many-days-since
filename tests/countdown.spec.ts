@@ -7,7 +7,7 @@ test('counts down to the expected 2027 date and publishes no event for it', asyn
   await expect(page).toHaveTitle('Days Until Ohio State vs Michigan 2027: Countdown to The Game');
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     'content',
-    'Live countdown to Ohio State vs Michigan, expected on Saturday, November 27, 2027, at Michigan Stadium in Ann Arbor. The Big Ten has not announced the date or kickoff time.'
+    'Live countdown to Ohio State vs Michigan, expected on Saturday, November 27, 2027, at Michigan Stadium in Ann Arbor. Kickoff is noon ET. The Big Ten has not announced the date.'
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
@@ -15,7 +15,7 @@ test('counts down to the expected 2027 date and publishes no event for it', asyn
   );
   await expect(page.getByRole('heading', { name: 'THE GAME', exact: true })).toBeVisible();
   await expect(page.locator('[data-countdown-days]')).toBeVisible();
-  await expect(page.getByText('NOVEMBER 27, 2027 (EXPECTED) · TIME TBA · ANN ARBOR')).toBeVisible();
+  await expect(page.getByText('NOVEMBER 27, 2027 (EXPECTED) · NOON ET · ANN ARBOR')).toBeVisible();
   await expect(page.getByText('The Big Ten has not announced the date.', { exact: false })).toBeVisible();
   const schemas = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((text) => JSON.parse(text));
   // No SportsEvent until the date is announced; WebSite belongs on the home page.
