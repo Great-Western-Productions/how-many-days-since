@@ -47,7 +47,7 @@ test.describe('Count', () => {
     await page.goto('/');
     const card = page.locator('.featured-merch');
 
-    await expect(card.getByRole('heading', { level: 2 })).toHaveText('IMPORTANT GAME T-SHIRT');
+    await expect(card.getByRole('heading', { level: 2 })).toHaveText('STATE OF OHIO T-SHIRT');
     await expect(card).toContainText("FROM THIS YEAR'S GAME: OHIO STATE 45-0 IN COLUMBUS.");
     await expect(card.locator('img')).toHaveAttribute('src', '/images/products/important-game-t-shirt.jpg');
     expect((await page.request.get('/images/products/important-game-t-shirt.jpg')).ok()).toBe(true);
